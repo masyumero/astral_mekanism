@@ -213,7 +213,7 @@ public abstract class BETickWorkFormulaicAssemblicator extends TileEntityConfigu
         int operations = getBaselineMaxOperations();
         if (outputSlot.isEmpty() || ItemStack.isSameItemSameTags(savedOutputItem, outputSlot.getStack())) {
             operations = Math.min(operations,
-                    (savedOutputItem.getMaxStackSize() - outputSlot.getCount()) / savedOutputItem.getCount());
+                    (outputSlot.getLimit(savedOutputItem) - outputSlot.getCount()) / savedOutputItem.getCount());
         } else {
             return false;
         }

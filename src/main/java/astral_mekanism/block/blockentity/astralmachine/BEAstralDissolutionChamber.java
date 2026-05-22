@@ -31,6 +31,6 @@ public class BEAstralDissolutionChamber extends BEAMEDissolutionChamber {
     protected IGasTank createInjectTank(BiPredicate<Gas, AutomationType> canExtract,
             BiPredicate<Gas, AutomationType> canInsert, Predicate<Gas> validator,
             @Nullable ChemicalAttributeValidator attributeValidator, @Nullable IContentsListener listener) {
-        return ChemicalTankBuilder.GAS.create(ticker, canExtract, canInsert, validator, attributeValidator, listener);
+        return ChemicalTankBuilder.GAS.create(Long.MAX_VALUE, canExtract, canInsert, validator, attributeValidator, listener);
     }
 }
