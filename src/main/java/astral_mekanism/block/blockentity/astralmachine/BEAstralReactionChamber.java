@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import astral_mekanism.block.blockentity.base.BlockEntityRecipeMachine;
+import astral_mekanism.block.blockentity.elements.ExtendedComponentEjector;
 import astral_mekanism.block.blockentity.elements.energyContainer.EnergyRequiredRecipeMachineEnergyContainer;
 import astral_mekanism.block.blockentity.interf.IAAEReactionChamber;
 import astral_mekanism.generalrecipe.GeneralRecipeType;
@@ -39,7 +40,6 @@ import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.tile.component.TileComponentConfig;
-import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -74,8 +74,9 @@ public class BEAstralReactionChamber extends BlockEntityRecipeMachine<ReactionCh
                 energySlot, false);
         configComponent.setupIOConfig(TransmissionType.FLUID, inputTank, outputTank, RelativeSide.RIGHT);
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
-        ejectorComponent = new TileComponentEjector(this, () -> 0x7fffffff)
-                .setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.FLUID);
+        ejectorComponent = new ExtendedComponentEjector(this, () -> 0x7fffffff)
+                .setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.FLUID)
+                .setCanFluidTankEject((tank, type) -> tank == outputTank && type.canOutput());
         itemHandlers = new IInputHandler[9];
         for (int index = 0; index < 9; index++) {
             itemHandlers[index] = InputHelper.getInputHandler(inputSlots[index], RecipeError.NOT_ENOUGH_INPUT);
