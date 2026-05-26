@@ -9,7 +9,7 @@
         "gas": "astral_mekanism:interstellar_antimatter"
     },
     "rightInput": {
-        "amount": 1,
+        "amount": 10,
         "gas": "astral_mekanism:astral_ether"
     }
 }

@@ -30,7 +30,7 @@ public class BEEnchantedOsmiumCompressor extends BEAMEAdvancedMachine {
     private long gasTankCapacity = 1 * 5000;
 
     public BEEnchantedOsmiumCompressor(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
-        super(blockProvider, pos, state, "mekanism:osmium_compressor", 1);
+        super(blockProvider, pos, state, "mekanism:osmium_compressor", 200);
     }
 
     @Override
