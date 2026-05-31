@@ -208,6 +208,7 @@ public class AMEClient extends AstralMekanism {
         registerScreenMek(AMEMachines.ENCHANTED_ALLOYER, GuiAMEAlloyer<BEEnchantedAlloyer>::new);
         registerScreenMek(AMEMachines.ENCHANTED_ANTIPROTONIC_NUCLEOSYNTHESIZER,
                 GuiAMEAntiprotonicNucleoSynthesizer<BEEnchantedAntiprotonicNucleosynthesizer>::new);
+        registerScreenMek(AMEMachines.ENCHANTED_APT, GuiCompactAPT<BEEnchantedAPT>::new);
         registerScreenMek(AMEMachines.ENCHANTED_CHEMICAL_INFUSER,
                 GuiAMEChemicalInfuser<BEEnchantedChemicalInfuser>::new);
         registerScreenMek(AMEMachines.ENCHANTED_CHEMICAL_OXIDIZER,
@@ -226,7 +227,8 @@ public class AMEClient extends AstralMekanism {
         registerScreenMek(AMEMachines.ENCHANTED_GREEN_HOUSE, GuiGreenHouse<BEEnchantedGreenHouse>::new);
         registerScreenMek(AMEMachines.ENCHANTED_ISTOPIC_CENTRIFUGE,
                 GuiGasToGasMachine<BEEnchantedIsotopicCentrifuge>::new);
-        registerScreenMek(AMEMachines.ENCHANTED_MEKANICAL_INSCRIBER, GuiMekanicalInscriber<BEEnchantedMekanicalInscriber>::new);
+        registerScreenMek(AMEMachines.ENCHANTED_MEKANICAL_INSCRIBER,
+                GuiMekanicalInscriber<BEEnchantedMekanicalInscriber>::new);
         registerScreenMek(AMEMachines.ENCHANTED_SPS, GuiGasToGasMachine<BEEnchantedSPS>::new);
         registerScreenMek(AMEMachines.ENCHANTED_MELTER, GuiAMEMelter<BEEnchantedMelter>::new);
         registerScreenMek(AMEMachines.ENCHANTED_METALLURGIC_INFUSER,

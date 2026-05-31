@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import astral_mekanism.AMELang;
 import astral_mekanism.enumexpansion.AMEDataType;
 import mekanism.api.text.EnumColor;
@@ -129,6 +131,32 @@ public class DataTypeMixin {
         $VALUES = newValues;
         TYPES = DataType.values();
         return result;
+    }
+
+    @ModifyReturnValue(at = { @At("RETURN") }, method = { "canOutput" })
+    private boolean astral_mekanism$modifyCanOutput(boolean original) {
+        DataType self = (DataType) (Object) this;
+        return original
+                || self == AMEDataType.INPUT_OUTPUT_astral
+                || self == AMEDataType.OUTPUTleft
+                || self == AMEDataType.OUTPUT1low
+                || self == AMEDataType.OUTPUT2low
+                || self == AMEDataType.OUTPUTleftlow
+                || self == AMEDataType.INPUT1_OUTPUT
+                || self == AMEDataType.INPUT1_OUTPUT1
+                || self == AMEDataType.INPUT1_OUTPUT2
+                || self == AMEDataType.INPUT2_OUTPUT
+                || self == AMEDataType.INPUT2_OUTPUT1
+                || self == AMEDataType.INPUT2_OUTPUT2
+                || self == AMEDataType.INPUT3_OUTPUT
+                || self == AMEDataType.INPUT_OUTPUT1
+                || self == AMEDataType.INPUT_OUTPUTleft
+                || self == AMEDataType.HEATED_FLUID_COOLANT
+                || self == AMEDataType.HEATED_GAS_COOLANT
+                || self == AMEDataType.DOUBLE_GAS_COOLANT
+                || self == AMEDataType.NUCLEAR_WASTE
+                || self == AMEDataType.STEAM
+                || self == AMEDataType.INPUT_OUTPUT_astral;
     }
 
 }

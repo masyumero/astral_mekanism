@@ -1,0 +1,59 @@
+{
+  "type": "advanced_ae:reaction",
+  "energy": 10000,
+  "fluid": {
+    "fluidStack": {
+      "Amount": 16000,
+      "FluidName": "minecraft:lava"
+    }
+  },
+  "input_items": [
+    {
+      "amount": 1,
+      "ingredient": {
+        "item": "astral_mekanism:compact_apt"
+      }
+    },
+    {
+      "amount": 2,
+      "ingredient": {
+        "item": "evolvedmekanism:dense_control_circuit"
+      }
+    },
+    {
+      "amount": 4,
+      "ingredient": {
+        "item": "evolvedmekanism:alloy_singular"
+      }
+    },
+    {
+      "amount": 8,
+      "ingredient": {
+        "item": "mekanism_extras:ingot_naquadah"
+      }
+    },
+    {
+      "amount": 16,
+      "ingredient": {
+        "item": "mekanismelements:pellet_neutron_source"
+      }
+    },
+    {
+      "amount": 32,
+      "ingredient": {
+        "item": "astral_mekanism:enhanced_control_circuit"
+      }
+    },
+    {
+      "amount": 64,
+      "ingredient": {
+        "item": "astral_mekanism:alloy_enchanted"
+      }
+    }
+  ],
+  "output": {
+    "#": 1,
+    "#c": "ae2:i",
+    "id": "astral_mekanism:enchanted_apt"
+  }
+}

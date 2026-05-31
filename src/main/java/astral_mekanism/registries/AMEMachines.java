@@ -68,6 +68,7 @@ import astral_mekanism.block.blockentity.compact.BECompactFusionReactor;
 import astral_mekanism.block.blockentity.compact.BECompactNaquadahReactor;
 import astral_mekanism.block.blockentity.compact.BECompactSPS;
 import astral_mekanism.block.blockentity.compact.BECompactTEP;
+import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedAPT;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedAdsorptionSeparator;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedAirCompressor;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedAlloyer;
@@ -404,7 +405,8 @@ public class AMEMachines {
                     BEAstralAPT.class,
                     AMELang.DESCRIPTION_ASTRAL_MACHINE,
                     builder -> builder
-                            .withEnergyConfig(EMConfig.general.aptEnergyConsumption, MAX_SUPPLIER)
+                            .withEnergyConfig(() -> EMConfig.general.aptEnergyConsumption.get().multiply(100),
+                                    MAX_SUPPLIER)
                             .changeAttributeUpgrade(EnumSet.of(AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
                                     AMEUpgrade.RADIOACTIVE_SEALING.getValue(),
                                     AMEUpgrade.AIR_INTAKE.getValue())));
@@ -932,6 +934,19 @@ public class AMEMachines {
                                     AMEUpgrade.RADIOACTIVE_SEALING.getValue(),
                                     AMEUpgrade.AIR_INTAKE.getValue(),
                                     ExtraUpgrade.STACK)));
+
+    public static final MachineRegistryObject<BEEnchantedAPT, ?, MekanismTileContainer<BEEnchantedAPT>, ?> ENCHANTED_APT = MACHINES
+            .registerSimple("enchanted_apt",
+                    BEEnchantedAPT::new,
+                    BEEnchantedAPT.class,
+                    AMELang.DESCRIPTION_COMPACT_MACHINE,
+                    builder -> builder
+                            .withEnergyConfig(() -> EMConfig.general.aptEnergyConsumption.get().multiply(100),
+                                    () -> EMConfig.general.aptEnergyStorage.get().multiply(400))
+                            .changeAttributeUpgrade(EnumSet.of(AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
+                                    AMEUpgrade.HYPER_SPEED.getValue(),
+                                    AMEUpgrade.RADIOACTIVE_SEALING.getValue(),
+                                    AMEUpgrade.AIR_INTAKE.getValue())));
 
     public static final MachineRegistryObject<BEEnchantedChemicalInfuser, BlockTileModel<BEEnchantedChemicalInfuser, BlockTypeMachine<BEEnchantedChemicalInfuser>>, MekanismTileContainer<BEEnchantedChemicalInfuser>, ItemBlockMachine> ENCHANTED_CHEMICAL_INFUSER = MACHINES
             .registerSimple("enchanted_chemical_infuser",

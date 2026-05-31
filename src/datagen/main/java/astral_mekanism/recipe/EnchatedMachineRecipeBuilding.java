@@ -6,11 +6,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.fxd927.mekanismelements.common.registries.MSBlocks;
+import com.fxd927.mekanismelements.common.registries.MSItems;
+import com.jerry.mekanism_extras.common.registry.ExtraItem;
 
 import astral_mekanism.AMEConstants;
 import astral_mekanism.registries.AMEItems;
 import astral_mekanism.registries.AMEMachines;
 import fr.iglee42.evolvedmekanism.registries.EMBlocks;
+import fr.iglee42.evolvedmekanism.registries.EMItems;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.common.registries.MekanismBlocks;
 import mekanism.common.registries.MekanismItems;
@@ -19,6 +22,9 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.fluids.FluidStack;
+import net.pedroksl.advanced_ae.recipes.ReactionChamberRecipeBuilder;
 
 public class EnchatedMachineRecipeBuilding {
 
@@ -51,6 +57,16 @@ public class EnchatedMachineRecipeBuilding {
                     .save(consumer, AMEConstants.rl(
                             "craftting/enchanted_machine/" + enchantedAndNormal.enchanted.getRegistryName().getPath()));
         }
+        ReactionChamberRecipeBuilder.react(AMEMachines.ENCHANTED_APT, 10000)
+                .input(AMEMachines.COMPACT_APT, 1)
+                .input(EMItems.DENSE_CONTROL_CIRCUIT, 2)
+                .input(EMItems.SINGULAR_ALLOY, 4)
+                .input(ExtraItem.INGOT_NAQUADAH, 8)
+                .input(MSItems.NEUTRON_SOURCE_PELLET, 16)
+                .input(AMEItems.ENHANCED_CONTROL_CIRCUIT, 32)
+                .input(AMEItems.ENCHANTED_ALLOY, 64)
+                .fluid(new FluidStack(Fluids.LAVA, 16000))
+                .save(consumer, AMEConstants.rl("aae_reaction/enchanted_apt"));
     }
 
     private static final List<EnchantedAndNormal> LIST_NORMAL = new ArrayList<>();
@@ -102,7 +118,8 @@ public class EnchatedMachineRecipeBuilding {
         LIST_NORMAL
                 .add(new EnchantedAndNormal(AMEMachines.ENCHANTED_RADIATION_IRRADIATOR, MSBlocks.RADIATION_IRRADIATOR));
         LIST_NORMAL.add(new EnchantedAndNormal(AMEMachines.ENCHANTED_SOLIDIFIER, EMBlocks.SOLIDIFIER));
-        LIST_NORMAL.add(new EnchantedAndNormal(AMEMachines.ENCHANTED_MEKANICAL_INSCRIBER, AMEMachines.MEKANICAL_INSCRIBER));
+        LIST_NORMAL.add(
+                new EnchantedAndNormal(AMEMachines.ENCHANTED_MEKANICAL_INSCRIBER, AMEMachines.MEKANICAL_INSCRIBER));
 
         LIST_GASUPGRADE.add(new EnchantedAndNormal(AMEMachines.ENCHANTED_CHEMICAL_INJECTION_CHAMBER,
                 MekanismBlocks.CHEMICAL_INJECTION_CHAMBER));

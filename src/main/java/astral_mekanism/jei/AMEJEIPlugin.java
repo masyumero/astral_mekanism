@@ -276,6 +276,7 @@ public class AMEJEIPlugin implements IModPlugin {
         // Evolved Mekanism
         CatalystRegistryHelper.register(registry, EMJEI.APT,
                 AMEMachines.COMPACT_APT,
+                AMEMachines.ENCHANTED_APT,
                 AMEMachines.ASTRAL_APT);
         CatalystRegistryHelper.register(registry, EMJEI.ALLOYING,
             AMEMachines.ENCHANTED_ALLOYER,
