@@ -8,13 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.fxd927.mekanismelements.api.recipes.RadiationIrradiatingRecipe;
-import com.fxd927.mekanismelements.api.recipes.cache.RadiationIrradiatingCachedRecipe;
 import com.fxd927.mekanismelements.common.recipe.IMSRecipeTypeProvider;
 import com.fxd927.mekanismelements.common.recipe.MSRecipeType;
 import com.fxd927.mekanismelements.common.recipe.lookup.IMSDoubleRecipeLookupHandler;
 import com.fxd927.mekanismelements.common.recipe.lookup.cache.MSInputRecipeCache;
 import com.fxd927.mekanismelements.common.tile.prefab.MSTileEntityRecipeMachine;
 
+import astral_mekanism.recipes.cachedRecipe.FormulizedRadiationIrradiatingCachedRecipe;
+import astral_mekanism.recipes.output.AMOutputHelper;
 import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
 import mekanism.api.RelativeSide;
@@ -28,6 +29,7 @@ import mekanism.api.chemical.gas.IGasTank;
 import mekanism.api.chemical.infuse.IInfusionTank;
 import mekanism.api.chemical.infuse.InfuseType;
 import mekanism.api.chemical.infuse.InfusionStack;
+import mekanism.api.chemical.merged.BoxedChemicalStack;
 import mekanism.api.chemical.merged.MergedChemicalTank;
 import mekanism.api.chemical.pigment.IPigmentTank;
 import mekanism.api.chemical.pigment.Pigment;
@@ -38,10 +40,10 @@ import mekanism.api.chemical.slurry.SlurryStack;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe;
+import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
-import mekanism.api.recipes.inputs.ILongInputHandler;
 import mekanism.api.recipes.inputs.InputHelper;
-import mekanism.api.recipes.outputs.BoxedChemicalOutputHandler;
+import mekanism.api.recipes.outputs.IOutputHandler;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.holder.chemical.ChemicalTankHelper;
 import mekanism.common.capabilities.holder.chemical.IChemicalTankHolder;
@@ -64,7 +66,6 @@ import mekanism.common.tile.base.SubstanceType;
 import mekanism.common.tile.component.TileComponentConfig;
 import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.StatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -85,9 +86,9 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
     public double injectUsage = 1;
     private static final long MAX_CHEMICAL = Long.MAX_VALUE;
 
-    private final BoxedChemicalOutputHandler outputHandler;
+    private final IOutputHandler<BoxedChemicalStack> outputHandler;
     private final IInputHandler<@NotNull ItemStack> itemInputHandler;
-    private final ILongInputHandler<@NotNull GasStack> gasInputHandler;
+    private final IInputHandler<GasStack> gasInputHandler;
 
     private MachineEnergyContainer<?> energyContainer;
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getInputGasItem", docPlaceholder = "gas input item slot")
@@ -121,9 +122,8 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
 
         itemInputHandler = InputHelper.getInputHandler(inputSlot,
                 CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_INPUT);
-        gasInputHandler = InputHelper.getConstantInputHandler(injectTank);
-        outputHandler = new BoxedChemicalOutputHandler(outputTank,
-                CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
+        gasInputHandler = InputHelper.getInputHandler(injectTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
+        outputHandler = AMOutputHelper.getOutputHandler(outputTank, RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
     }
 
     @Override
@@ -245,8 +245,7 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
     @Override
     public CachedRecipe<RadiationIrradiatingRecipe> createNewCachedRecipe(@NotNull RadiationIrradiatingRecipe recipe,
             int cacheIndex) {
-        return new RadiationIrradiatingCachedRecipe(recipe, recheckAllRecipeErrors, itemInputHandler, gasInputHandler,
-                () -> StatUtils.inversePoisson(injectUsage), outputHandler)
+        return new FormulizedRadiationIrradiatingCachedRecipe(recipe, recheckAllRecipeErrors, itemInputHandler, gasInputHandler, outputHandler)
                 .setErrorsChanged(this::onErrorsChanged)
                 .setCanHolderFunction(() -> MekanismUtils.canFunction(this))
                 .setActive(this::setActive)

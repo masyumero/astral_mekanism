@@ -3,7 +3,6 @@ package astral_mekanism.registries;
 import java.util.function.Function;
 
 import astral_mekanism.AMEConstants;
-import astral_mekanism.mixin.mekanism.recipe.MekanismRecipeTypeMixin;
 import astral_mekanism.recipes.inputRecipeCache.AMInputRecipeCache;
 import astral_mekanism.recipes.inputRecipeCache.AstralCraftingRecipeCache;
 import astral_mekanism.recipes.inputRecipeCache.MekanicalTransformRecipeCache;
@@ -14,6 +13,7 @@ import astral_mekanism.recipes.recipe.FluidFluidToFluidRecipe;
 import astral_mekanism.recipes.recipe.GasInfusionToFluidRecipe;
 import astral_mekanism.recipes.recipe.MekanicalTransformRecipe;
 import astral_mekanism.recipes.recipe.ReconstructionRecipe;
+import astral_mekanism.util.RecipeTypeUtils;
 import mekanism.api.chemical.gas.Gas;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.recipes.GasToGasRecipe;
@@ -35,15 +35,7 @@ public class AMERecipeTypes {
 
     private static <MR extends MekanismRecipe, IIRC extends IInputRecipeCache> RecipeTypeRegistryObject<MR, IIRC> register(
             String name, Function<MekanismRecipeType<MR, IIRC>, IIRC> inputCacheCreator) {
-        return RECIPE_TYPES.register(name, () -> {
-            MekanismRecipeType<MR, IIRC> recipeType = MekanismRecipeTypeMixin.astral_mekanism$invokeNew(name,
-                    (t) -> null);
-            @SuppressWarnings("unchecked")
-            MekanismRecipeTypeMixin<MR, IIRC> rtMixin = (MekanismRecipeTypeMixin<MR, IIRC>) (Object) recipeType;
-            rtMixin.astral_mekanism$setRegistryName(AMEConstants.rl(name));
-            rtMixin.astral_mekanism$setInputCache(inputCacheCreator.apply(recipeType));
-            return recipeType;
-        });
+        return RecipeTypeUtils.registerRecipeType(RECIPE_TYPES, name, AMEConstants::rl, inputCacheCreator);
     }
 
     public static final RecipeTypeRegistryObject<FluidFluidToFluidRecipe, FluidFluid<FluidFluidToFluidRecipe>> FLUID_INFUSER_RECIPE = register(
