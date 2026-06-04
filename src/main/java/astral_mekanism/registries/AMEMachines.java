@@ -43,6 +43,7 @@ import astral_mekanism.block.blockentity.astralmachine.BEAstralFluidInfuser;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralFormulaicAssemblicator;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralGNA;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralGreenHouse;
+import astral_mekanism.block.blockentity.astralmachine.BEAstralInfusingCondensentrator;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralIsotopicCentrifuge;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralMekanicalCharger;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralMekanicalInscriber;
@@ -83,6 +84,7 @@ import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedElectrolyti
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedEnergizedSmelter;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedFormulaicAssemblicator;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedGreenHouse;
+import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedInfusingCondensentrator;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedIsotopicCentrifuge;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedMekanicalInscriber;
 import astral_mekanism.block.blockentity.enchantedmachine.BEEnchantedMelter;
@@ -584,6 +586,17 @@ public class AMEMachines {
                             .withEnergyConfig(AMEConfig.usage.greenHouse, MAX_SUPPLIER)
                             .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, Upgrade.ENERGY,
                                     AMEUpgrade.COBBLESTONE_SUPPLY.getValue(), AMEUpgrade.WATER_SUPPLY.getValue())));
+
+    public static final MachineRegistryObject<BEAstralInfusingCondensentrator, ?, MekanismTileContainer<BEAstralInfusingCondensentrator>, ?> ASTRAL_INFUSING_CONDENSENTRATOR = MACHINES
+            .registerSimple("astral_infusing_condensentrator",
+                    BEAstralInfusingCondensentrator::new,
+                    BEAstralInfusingCondensentrator.class,
+                    AMELang.DESCRIPTION_ASTRAL_MACHINE,
+                    builder -> builder
+                            .withEnergyConfig(AMEConfig.usage.greenHouse, MAX_SUPPLIER)
+                            .changeAttributeUpgrade(EnumSet.of(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING,
+                                    AMEUpgrade.RADIOACTIVE_SEALING.getValue(),
+                                    AMEUpgrade.AIR_INTAKE.getValue())));
 
     public static final MachineRegistryObject<BEAstralIsotopicCentrifuge, BlockTileModel<BEAstralIsotopicCentrifuge, BlockTypeMachine<BEAstralIsotopicCentrifuge>>, MekanismTileContainer<BEAstralIsotopicCentrifuge>, ItemBlockMachine> ASTRAL_ISOTOPIC_CENTRIFUGE = MACHINES
             .registerSimple("astral_isotopic_centrifuge",
@@ -1094,6 +1107,18 @@ public class AMEMachines {
                                             AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
                                             AMEUpgrade.WATER_SUPPLY.getValue(),
                                             ExtraUpgrade.STACK)));
+
+    public static final MachineRegistryObject<BEEnchantedInfusingCondensentrator, ?, MekanismTileContainer<BEEnchantedInfusingCondensentrator>, ?> ENCHANTED_INFUSING_CONDENSENTRATOR = MACHINES
+            .registerSimple("enchanted_infusing_condensentrator",
+                    BEEnchantedInfusingCondensentrator::new,
+                    BEEnchantedInfusingCondensentrator.class,
+                    AMELang.ITEM_GROUP,
+                    builder -> builder
+                            .withEnergyConfig(AMEConfig.usage.greenHouse,
+                                    () -> AMEConfig.storage.greenHouse.get().multiply(200))
+                            .changeAttributeUpgrade(EnumSet.of(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING,
+                                    AMEUpgrade.RADIOACTIVE_SEALING.getValue(),
+                                    AMEUpgrade.AIR_INTAKE.getValue())));
 
     public static final MachineRegistryObject<BEEnchantedIsotopicCentrifuge, BlockTileModel<BEEnchantedIsotopicCentrifuge, BlockTypeMachine<BEEnchantedIsotopicCentrifuge>>, MekanismTileContainer<BEEnchantedIsotopicCentrifuge>, ItemBlockMachine> ENCHANTED_ISTOPIC_CENTRIFUGE = MACHINES
             .registerSimple("enchanted_isotopic_centrifuge",

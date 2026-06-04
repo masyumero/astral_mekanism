@@ -34,7 +34,7 @@ public class BEInfusingCondensentrator extends BEAbstractInfusingCondensentrator
     }
 
     @Override
-    protected int getFluidTankCapacity() {
+    protected int initFluidTankCapacity() {
         return 100000;
     }
 

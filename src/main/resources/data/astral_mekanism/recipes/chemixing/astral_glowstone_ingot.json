@@ -2,7 +2,7 @@
     "type": "evolvedmekanism:chemixing",
     "extraInput": {
         "ingredient": {
-            "item": "mekanism_extras:enriched_radiance"
+            "item": "mekanismelements:pellet_neutron_source"
         }
     },
     "gasInput": {

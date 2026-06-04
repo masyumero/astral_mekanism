@@ -66,6 +66,7 @@ public abstract class BEAppliedGasToGasMachine extends BEAppliedEnergizedMachine
             MekanismKey key = cardItem.getKey(is);
             if (key != null && hasLevel()) {
                 GasStack stack = AMEKeyUtils.getGas(key);
+                stack.setAmount(Long.MAX_VALUE);
                 level.getRecipeManager().getAllRecipesFor(getRecipeType().getRecipeType())
                         .stream().filter(r -> r.test(stack)).findFirst()
                         .ifPresentOrElse(r -> {

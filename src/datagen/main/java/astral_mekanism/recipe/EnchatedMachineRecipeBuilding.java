@@ -120,6 +120,8 @@ public class EnchatedMachineRecipeBuilding {
         LIST_NORMAL.add(new EnchantedAndNormal(AMEMachines.ENCHANTED_SOLIDIFIER, EMBlocks.SOLIDIFIER));
         LIST_NORMAL.add(
                 new EnchantedAndNormal(AMEMachines.ENCHANTED_MEKANICAL_INSCRIBER, AMEMachines.MEKANICAL_INSCRIBER));
+        LIST_NORMAL.add(new EnchantedAndNormal(AMEMachines.ENCHANTED_INFUSING_CONDENSENTRATOR,
+                AMEMachines.INFUSING_CONDENSENTRATOR));
 
         LIST_GASUPGRADE.add(new EnchantedAndNormal(AMEMachines.ENCHANTED_CHEMICAL_INJECTION_CHAMBER,
                 MekanismBlocks.CHEMICAL_INJECTION_CHAMBER));

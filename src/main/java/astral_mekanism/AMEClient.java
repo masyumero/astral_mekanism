@@ -22,6 +22,7 @@ import astral_mekanism.block.blockentity.astralmachine.BEAstralFluidInfuser;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralFormulaicAssemblicator;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralGNA;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralGreenHouse;
+import astral_mekanism.block.blockentity.astralmachine.BEAstralInfusingCondensentrator;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralIsotopicCentrifuge;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralMekanicalCharger;
 import astral_mekanism.block.blockentity.astralmachine.BEAstralMekanicalInscriber;
@@ -163,6 +164,8 @@ public class AMEClient extends AstralMekanism {
                 GuiAMEFormulaicAssemblicator<BEAstralFormulaicAssemblicator>::new);
         registerScreenMek(AMEMachines.ASTRAL_GNA, GuiGasToGasBlock<BEAstralGNA>::new);
         registerScreenMek(AMEMachines.ASTRAL_GREEN_HOUSE, GuiGreenHouse<BEAstralGreenHouse>::new);
+        registerScreenMek(AMEMachines.ASTRAL_INFUSING_CONDENSENTRATOR,
+                GuiInfusingCondensentrator<BEAstralInfusingCondensentrator>::new);
         registerScreenMek(AMEMachines.ASTRAL_ISOTOPIC_CENTRIFUGE,
                 GuiGasToGasMachine<BEAstralIsotopicCentrifuge>::new);
         registerScreenMek(AMEMachines.ASTRAL_MEKANICAL_CHARGER,
@@ -225,6 +228,8 @@ public class AMEClient extends AstralMekanism {
         registerScreenMek(AMEMachines.ENCHANTED_FORMULAIC_ASSEMBLICATOR,
                 GuiAMEFormulaicAssemblicator<BEEnchantedFormulaicAssemblicator>::new);
         registerScreenMek(AMEMachines.ENCHANTED_GREEN_HOUSE, GuiGreenHouse<BEEnchantedGreenHouse>::new);
+        registerScreenMek(AMEMachines.ENCHANTED_INFUSING_CONDENSENTRATOR,
+                GuiInfusingCondensentrator<BEEnchantedInfusingCondensentrator>::new);
         registerScreenMek(AMEMachines.ENCHANTED_ISTOPIC_CENTRIFUGE,
                 GuiGasToGasMachine<BEEnchantedIsotopicCentrifuge>::new);
         registerScreenMek(AMEMachines.ENCHANTED_MEKANICAL_INSCRIBER,

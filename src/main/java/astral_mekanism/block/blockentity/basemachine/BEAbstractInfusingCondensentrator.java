@@ -55,7 +55,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 
 public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipeMachine<GasInfusionToFluidRecipe>
-        implements GasInfusionRecipeLookUpHandler<GasInfusionToFluidRecipe>,IHasDumpButton {
+        implements GasInfusionRecipeLookUpHandler<GasInfusionToFluidRecipe>, IHasDumpButton {
 
     public static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
@@ -89,7 +89,7 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
         configComponent.setupInputConfig(TransmissionType.INFUSION, infusionTank);
         configComponent.setupOutputConfig(TransmissionType.FLUID, outputTank, RelativeSide.values());
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
-        ejectorComponent = new TileComponentEjector(this, this::getFluidTankCapacity)
+        ejectorComponent = new TileComponentEjector(this, () -> 0l, this::initFluidTankCapacity)
                 .setOutputData(configComponent, TransmissionType.FLUID, TransmissionType.ITEM);
         gasInputHandler = InputHelper.getInputHandler(gasTank, RecipeError.NOT_ENOUGH_INPUT);
         infusionInputHandler = InputHelper.getInputHandler(infusionTank, RecipeError.NOT_ENOUGH_SECONDARY_INPUT);
@@ -115,7 +115,7 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
     protected IFluidTankHolder getInitialFluidTanks(IContentsListener listener,
             IContentsListener recipeCacheListener) {
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this::getDirection, this::getConfig);
-        builder.addTank(outputTank = BasicFluidTank.output(getFluidTankCapacity(), recipeCacheListener));
+        builder.addTank(outputTank = BasicFluidTank.output(initFluidTankCapacity(), recipeCacheListener));
         return builder.build();
     }
 
@@ -165,7 +165,7 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
     }
 
     @Override
-    public void dump(){
+    public void dump() {
         infusionTank.setEmpty();
     }
 
@@ -194,7 +194,7 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
 
     protected abstract int getBaselineMaxOperations();
 
-    protected abstract int getFluidTankCapacity();
+    protected abstract int initFluidTankCapacity();
 
     protected abstract long getChemicalTankCapacity();
 

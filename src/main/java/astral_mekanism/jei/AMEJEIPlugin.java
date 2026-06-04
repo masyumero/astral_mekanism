@@ -336,7 +336,9 @@ public class AMEJEIPlugin implements IModPlugin {
         CatalystRegistryHelper.register(registry, AMEJEIRecipeType.MEKANICAL_COMPOSTER,
                 AMEMachines.MEKANICAL_COMPOSTER, AMEMachines.ASTRAL_COMPOSTER);
         CatalystRegistryHelper.register(registry, AMEJEIRecipeType.INFUSING_CONDENSE,
-                AMEMachines.INFUSING_CONDENSENTRATOR);
+                AMEMachines.INFUSING_CONDENSENTRATOR,
+                AMEMachines.ENCHANTED_INFUSING_CONDENSENTRATOR,
+                AMEMachines.ASTRAL_INFUSING_CONDENSENTRATOR);
         CatalystRegistryHelper.register(registry, AMEJEIRecipeType.GAS_CONVERSION,
                 AMEMachines.GAS_CONVERTER);
 
