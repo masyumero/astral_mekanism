@@ -39,7 +39,7 @@ public class GuiInterstellarAntineutronicMatterReconstructionApparatus extends
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(new GuiFluidGauge(tile::getFluidTank, () -> tile.getFluidTanks(null),
                 GaugeType.STANDARD, this, 7, 17));
         addRenderableWidget(new GuiGasGauge(tile::getInputGasTank, () -> tile.getGasTanks(null),

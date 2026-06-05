@@ -30,7 +30,7 @@ public class GuiAMESolidifier<BE extends BEAMESolidifier>
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(new GuiFluidGauge(tile::getInputFluidTank, () -> tile.getFluidTanks(null),
                 GaugeType.STANDARD, this, 28, 10)
                 .warning(WarningType.NO_MATCHING_RECIPE,

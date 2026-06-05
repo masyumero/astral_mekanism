@@ -140,7 +140,7 @@ public class BEMekanicalInscriber extends BlockEntityProgressMachine<InscriberRe
     }
 
     @ComputerMethod(methodDescription = ComputerConstants.DESCRIPTION_GET_ENERGY_USAGE)
-    FloatingLong getEnergyUsage() {
+    public FloatingLong getEnergyUsage() {
         return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
     }
 }

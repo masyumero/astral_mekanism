@@ -13,7 +13,7 @@ import mekanism.common.recipe.lookup.IDoubleRecipeLookupHandler.ItemChemicalReci
 import mekanism.common.tile.base.TileEntityMekanism;
 
 public interface IItemGasToItemMachine<BE extends TileEntityMekanism & IItemGasToItemMachine<BE, RECIPE>, RECIPE extends ItemStackGasToItemStackRecipe>
-        extends IEnergizedMachine<BE>, ItemChemicalRecipeLookupHandler<Gas, GasStack, RECIPE> {
+        extends IEnergizedMachine, ItemChemicalRecipeLookupHandler<Gas, GasStack, RECIPE> {
 
     public static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,

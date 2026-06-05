@@ -1,7 +1,9 @@
 {
   "values": [
+    "astral_mekanism:applied_crusher",
     "astral_mekanism:applied_crystallizer",
     "astral_mekanism:applied_electrolytic_separator",
+    "astral_mekanism:applied_enrichment_chamber",
     "astral_mekanism:applied_fission_reactor",
     "astral_mekanism:applied_fusion_reactor",
     "astral_mekanism:applied_isotopic_centrifuge",

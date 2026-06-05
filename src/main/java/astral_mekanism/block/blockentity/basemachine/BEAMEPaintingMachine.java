@@ -32,7 +32,9 @@ import mekanism.common.integration.computer.SpecialComputerMethodWrapper.Compute
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
 import mekanism.common.integration.computer.computercraft.ComputerConstants;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -79,6 +81,8 @@ public abstract class BEAMEPaintingMachine extends TileEntityRecipeMachine<Paint
     OutputInventorySlot outputSlot;
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem", docPlaceholder = "energy slot")
     EnergyInventorySlot energySlot;
+
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMEPaintingMachine(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -144,7 +148,7 @@ public abstract class BEAMEPaintingMachine extends TileEntityRecipeMachine<Paint
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
         pigmentInputSlot.fillTankOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage= recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @NotNull
@@ -181,8 +185,14 @@ public abstract class BEAMEPaintingMachine extends TileEntityRecipeMachine<Paint
 
     // Methods relating to IComputerTile
     @ComputerMethod(methodDescription = ComputerConstants.DESCRIPTION_GET_ENERGY_USAGE)
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
     // End methods IComputerTile
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
 }

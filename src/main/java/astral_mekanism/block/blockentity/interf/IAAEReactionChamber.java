@@ -15,7 +15,7 @@ import net.pedroksl.advanced_ae.recipes.ReactionChamberRecipe;
 
 public interface IAAEReactionChamber<BE extends BlockEntityRecipeMachine<ReactionChamberRecipe> & IAAEReactionChamber<BE>>
         extends IUnifiedRecipeTypedLookupHandler<ReactionChamberRecipe, AAEReactionRecipeCache>,
-        IEnergyRequiredRecipeMachine {
+        IEnergyRequiredRecipeMachine,IEnergizedMachine {
 
     public static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,

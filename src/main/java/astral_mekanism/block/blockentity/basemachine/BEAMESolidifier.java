@@ -33,6 +33,8 @@ import mekanism.common.capabilities.holder.fluid.FluidTankHelper;
 import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -78,6 +80,7 @@ public abstract class BEAMESolidifier extends TileEntityRecipeMachine<Solidifica
     private InputInventorySlot inputSlot;
     private OutputInventorySlot outputSlot;
     private EnergyInventorySlot energySlot;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMESolidifier(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -163,7 +166,7 @@ public abstract class BEAMESolidifier extends TileEntityRecipeMachine<Solidifica
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     public FloatingLong getRecipeEnergyRequired() {
@@ -202,8 +205,8 @@ public abstract class BEAMESolidifier extends TileEntityRecipeMachine<Solidifica
         return energyContainer;
     }
 
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     public IExtendedFluidTank getInputFluidTank() {
@@ -212,6 +215,12 @@ public abstract class BEAMESolidifier extends TileEntityRecipeMachine<Solidifica
 
     public IExtendedFluidTank getInputFluidExtraTank() {
         return inputFluidExtraTank;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 
     private static class SolidiferItemInputHandler implements IInputHandler<ItemStack> {

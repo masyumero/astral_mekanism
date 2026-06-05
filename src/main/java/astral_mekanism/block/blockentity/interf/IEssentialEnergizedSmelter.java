@@ -6,6 +6,7 @@ import astral_mekanism.block.blockentity.base.BlockEntityRecipeMachine;
 import astral_mekanism.generalrecipe.lookup.cache.recipe.SingleInputGeneralRecipeCache.GeneralSingleItem;
 import astral_mekanism.generalrecipe.lookup.handler.IUnifiedSingelRecipeLookupHandler;
 import mekanism.api.chemical.infuse.IInfusionTank;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.tile.TileEntityChemicalTank.GasMode;
@@ -37,4 +38,6 @@ public interface IEssentialEnergizedSmelter<BE extends BlockEntityRecipeMachine<
     public abstract double getProgressScaled();
 
     public abstract GasMode getGasMode();
+
+    public FloatingLong getEnergyUsage();
 }

@@ -23,6 +23,8 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -61,6 +63,7 @@ public abstract class BEAMEPrecisionSawmill extends TileEntityRecipeMachine<Sawm
     OutputInventorySlot outputSlot;
     OutputInventorySlot secondaryOutputSlot;
     EnergyInventorySlot energySlot;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMEPrecisionSawmill(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -105,7 +108,7 @@ public abstract class BEAMEPrecisionSawmill extends TileEntityRecipeMachine<Sawm
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage= recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -152,7 +155,13 @@ public abstract class BEAMEPrecisionSawmill extends TileEntityRecipeMachine<Sawm
                 || MekanismUtils.isSameTypeFactory(getBlockType(), tileType);
     }
 
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 }

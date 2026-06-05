@@ -14,6 +14,7 @@ import com.fxd927.mekanismelements.common.recipe.lookup.IMSDoubleRecipeLookupHan
 import com.fxd927.mekanismelements.common.recipe.lookup.cache.MSInputRecipeCache;
 import com.fxd927.mekanismelements.common.tile.prefab.MSTileEntityRecipeMachine;
 
+import astral_mekanism.block.blockentity.interf.IEnergizedMachine;
 import mekanism.api.IContentsListener;
 import mekanism.api.RelativeSide;
 import mekanism.api.chemical.ChemicalTankBuilder;
@@ -51,7 +52,9 @@ import mekanism.common.integration.computer.SpecialComputerMethodWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
 import mekanism.common.integration.computer.computercraft.ComputerConstants;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.chemical.MergedChemicalInventorySlot;
 import mekanism.common.inventory.warning.WarningTracker;
@@ -69,7 +72,7 @@ import net.minecraftforge.fluids.FluidStack;
 import static mekanism.common.tile.machine.TileEntityPressurizedReactionChamber.NOT_ENOUGH_FLUID_INPUT_ERROR;
 
 public abstract class BEAMEAdsorptionSeparator extends MSTileEntityRecipeMachine<AdsorptionRecipe> implements
-        IMSDoubleRecipeLookupHandler.ItemFluidRecipeLookupHandler<AdsorptionRecipe> {
+        IMSDoubleRecipeLookupHandler.ItemFluidRecipeLookupHandler<AdsorptionRecipe>, IEnergizedMachine {
     private static final List<CachedRecipe.OperationTracker.RecipeError> TRACKED_ERROR_TYPES = List.of(
             CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_ENERGY,
             CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_ENERGY_REDUCED_RATE,
@@ -98,6 +101,8 @@ public abstract class BEAMEAdsorptionSeparator extends MSTileEntityRecipeMachine
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem", docPlaceholder = "energy slot")
     EnergyInventorySlot energySlot;
 
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
+
     public BEAMEAdsorptionSeparator(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.FLUID,
@@ -111,7 +116,7 @@ public abstract class BEAMEAdsorptionSeparator extends MSTileEntityRecipeMachine
         configComponent.setupOutputConfig(TransmissionType.SLURRY, outputTank.getSlurryTank(), RelativeSide.RIGHT);
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
 
-        ejectorComponent = new TileComponentEjector(this ,() -> 0x7fffffffffffffffl);
+        ejectorComponent = new TileComponentEjector(this, () -> 0x7fffffffffffffffl);
         ejectorComponent
                 .setOutputData(configComponent, TransmissionType.ITEM, TransmissionType.FLUID, TransmissionType.GAS,
                         TransmissionType.INFUSION, TransmissionType.PIGMENT,
@@ -217,7 +222,7 @@ public abstract class BEAMEAdsorptionSeparator extends MSTileEntityRecipeMachine
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
         outputSlot.drainChemicalTanks();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -246,13 +251,13 @@ public abstract class BEAMEAdsorptionSeparator extends MSTileEntityRecipeMachine
 
     protected abstract int getBaselineMaxOperations();
 
-    public MachineEnergyContainer<BEAMEAdsorptionSeparator> getEnergyContainer() {
+    public MachineEnergyContainer<?> getEnergyContainer() {
         return energyContainer;
     }
 
     @ComputerMethod(methodDescription = ComputerConstants.DESCRIPTION_GET_ENERGY_USAGE)
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerChemicalTankWrapper.class, methodNames = {
@@ -262,5 +267,16 @@ public abstract class BEAMEAdsorptionSeparator extends MSTileEntityRecipeMachine
         MergedChemicalTank.Current current = outputTank.getCurrent();
         return outputTank.getTankFromCurrent(
                 current == MergedChemicalTank.Current.EMPTY ? MergedChemicalTank.Current.GAS : current);
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
+
+    @Override
+    public double getProgressScaled() {
+        return getActive() ? 1 : 0;
     }
 }

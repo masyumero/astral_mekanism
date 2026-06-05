@@ -21,6 +21,8 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -50,6 +52,7 @@ public abstract class BEAMEElectricMachine extends TileEntityRecipeMachine<ItemS
     InputInventorySlot inputSlot;
     OutputInventorySlot outputSlot;
     EnergyInventorySlot energySlot;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     private final String jeiRecipeType;
 
@@ -95,7 +98,7 @@ public abstract class BEAMEElectricMachine extends TileEntityRecipeMachine<ItemS
     public void onUpdateServer() {
         super.onUpdateServer();
         this.energySlot.fillContainerOrConvert();
-        this.recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage= this.recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -124,12 +127,18 @@ public abstract class BEAMEElectricMachine extends TileEntityRecipeMachine<ItemS
         return energyContainer;
     }
 
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     public String getJEI() {
         return this.jeiRecipeType;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 
 }

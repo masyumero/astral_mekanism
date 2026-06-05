@@ -40,9 +40,9 @@ public class IncomparableItemOutputHandler implements IOutputHandler<ItemStack> 
             tracker.updateOperations(operations);
             if (operations == 0) {
                 if (amountUsed == 0 && slot.getLimit(slot.getStack()) - slot.getCount() > 0) {
-                    tracker.addError(RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT);
+                    tracker.resetProgress(RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT);
                 } else {
-                    tracker.addError(notEnoughSpaceError);
+                    tracker.resetProgress(notEnoughSpaceError);
                 }
             }
         }

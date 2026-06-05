@@ -15,6 +15,7 @@ import fr.iglee42.evolvedmekanism.registries.EMRecipeType;
 import fr.iglee42.evolvedmekanism.tiles.LimitedInputInventorySlot;
 import mekanism.api.IContentsListener;
 import mekanism.api.inventory.IInventorySlot;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
@@ -26,7 +27,9 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -45,7 +48,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class BEAMEAlloyer extends TileEntityRecipeMachine<AlloyerRecipe>
-        implements TripleItemRecipeLookupHandler<AlloyerRecipe>, IEnergizedMachine<BEAMEAlloyer> {
+        implements TripleItemRecipeLookupHandler<AlloyerRecipe>, IEnergizedMachine {
 
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
@@ -63,6 +66,8 @@ public abstract class BEAMEAlloyer extends TileEntityRecipeMachine<AlloyerRecipe
     LimitedInputInventorySlot secondExtraInputSlot;
     OutputInventorySlot outputSlot;
     EnergyInventorySlot energySlot;
+
+    private FloatingLong energyUsed = FloatingLong.ZERO;
 
     public BEAMEAlloyer(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -139,7 +144,7 @@ public abstract class BEAMEAlloyer extends TileEntityRecipeMachine<AlloyerRecipe
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        energyUsed = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
         return;
     }
 
@@ -176,6 +181,17 @@ public abstract class BEAMEAlloyer extends TileEntityRecipeMachine<AlloyerRecipe
     @Override
     public double getProgressScaled() {
         return getActive() ? 1 : 0;
+    }
+
+    @Override
+    public FloatingLong getEnergyUsage() {
+        return energyUsed;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> energyUsed = v));
     }
 
 }

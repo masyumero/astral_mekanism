@@ -35,7 +35,7 @@ public class GuiAMEChemixer<BE extends BEAMEChemixer> extends GuiConfigurableTil
                         tile.getWarningCheck(BEAstralChemixer.NOT_ENOUGH_GAS_INPUT_ERROR));
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 164, 15))
                 .warning(WarningType.NOT_ENOUGH_ENERGY, tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY));
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(new GuiProgress(tile::getActive, ProgressType.BAR, this, 86, 38))
                 .jeiCategories(EMJEI.CHEMIXING)
                 .warning(WarningType.INPUT_DOESNT_PRODUCE_OUTPUT,

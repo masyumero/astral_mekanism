@@ -47,6 +47,7 @@ public class AstralMekanismRecipeProvider extends RecipeProvider {
         buildMekanicalMagmaBlockRecipes(consumer);
         CompressUnzipRecipeBuilding.buildRecipes(consumer);
         EnchatedMachineRecipeBuilding.build(consumer, AstralMekanismRecipeProvider::has);
+        BuildAppliedMachineRecipe.build(consumer, AstralMekanismRecipeProvider::has);
     }
 
     private static void buildTierMachineUpgradeRecipes(EnumMap<AMETier, ? extends IItemProvider> machines,

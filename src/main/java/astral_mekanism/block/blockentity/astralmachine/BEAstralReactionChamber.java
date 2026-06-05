@@ -35,6 +35,8 @@ import mekanism.common.capabilities.holder.fluid.FluidTankHelper;
 import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -64,6 +66,7 @@ public class BEAstralReactionChamber extends BlockEntityRecipeMachine<ReactionCh
     private final IOutputHandler<ItemFluidOutput> outputHandler;
 
     private FloatingLong recipeEnergyRequierd = FloatingLong.ZERO;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     @SuppressWarnings("unchecked")
     public BEAstralReactionChamber(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
@@ -142,7 +145,7 @@ public class BEAstralReactionChamber extends BlockEntityRecipeMachine<ReactionCh
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -195,6 +198,22 @@ public class BEAstralReactionChamber extends BlockEntityRecipeMachine<ReactionCh
     @Override
     public double getScaledProgress() {
         return getActive() ? 1 : 0;
+    }
+
+    @Override
+    public FloatingLong getEnergyUsage() {
+        return lastEnergyUsage;
+    }
+
+    @Override
+    public double getProgressScaled() {
+        return getScaledProgress();
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 
 }

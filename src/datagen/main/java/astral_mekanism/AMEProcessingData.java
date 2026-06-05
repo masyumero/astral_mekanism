@@ -116,9 +116,7 @@ public enum AMEProcessingData {
         final GasStackIngredient AQUA_REGIA = gCreator.createMulti(
                 gCreator.from(MSGases.AQUA_REGIA.getStack(1)),
                 gCreator.from(AMEGases.AQUA_REGIA.getStack(1)));
-        final GasStackIngredient NITRIC_ACID = gCreator.createMulti(
-                gCreator.from(MSGases.NITRIC_ACID.getStack(1)),
-                gCreator.from(AMEGases.NITRIC_ACID.getStack(1)));
+        final GasStackIngredient NITRIC_ACID = gCreator.from(MSGases.NITRIC_ACID.getStack(1));
         final GasStackIngredient SPARKLING_SINGULARITY_RIVULET = gCreator
                 .from(AMEGases.SPARKLING_SINGULARITY_RIVULET.getStack(5));
         final GasStackIngredient ANTIMATTER = gCreator.from(MekanismGases.ANTIMATTER.getStack(5));

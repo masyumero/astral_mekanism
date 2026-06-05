@@ -7,6 +7,7 @@ import astral_mekanism.generalrecipe.GeneralRecipeType;
 import astral_mekanism.generalrecipe.IUnifiedRecipeTypeProvider;
 import astral_mekanism.generalrecipe.lookup.cache.recipe.InscriberRecipeInputRecipeCache;
 import astral_mekanism.generalrecipe.lookup.handler.IUnifiedRecipeTypedLookupHandler;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
@@ -67,4 +68,6 @@ public interface IMekanicalInscriber
     public MachineEnergyContainer<?> getEnergyContainer();
 
     public double getProgressScaled();
+
+    FloatingLong getEnergyUsage();
 }

@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BEMekanicalCharger extends BlockEntityProgressMachine<ChargerRecipe> implements
         IUnifiedSingelRecipeLookupHandler<ItemStack, ChargerRecipe, GeneralSingleItem<Container, ChargerRecipe>>,
-        IEnergizedMachine<BEMekanicalCharger> {
+        IEnergizedMachine {
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,
@@ -61,6 +61,8 @@ public class BEMekanicalCharger extends BlockEntityProgressMachine<ChargerRecipe
     OutputInventorySlot outputSlot;
     EnergyInventorySlot energySlot;
     private MachineEnergyContainer<BEMekanicalCharger> energyContainer;
+
+    private FloatingLong energyUsed = FloatingLong.ZERO;
 
     public BEMekanicalCharger(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES, 10);
@@ -104,7 +106,7 @@ public class BEMekanicalCharger extends BlockEntityProgressMachine<ChargerRecipe
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        energyUsed = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @NotNull
@@ -114,8 +116,8 @@ public class BEMekanicalCharger extends BlockEntityProgressMachine<ChargerRecipe
                 inputSlot, outputSlot, getComponents());
     }
 
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? energyUsed : FloatingLong.ZERO;
     }
 
     @Override

@@ -39,6 +39,7 @@ import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
 import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.sync.SyncableBoolean;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.container.sync.SyncableInt;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -89,6 +90,7 @@ public class BEInterstellarAntineutronicMatterReconstructionApparatus
     InputInventorySlot inputSlot;
     OutputInventorySlot outputSlot;
     MachineEnergyContainer<BEInterstellarAntineutronicMatterReconstructionApparatus> energyContainer;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEInterstellarAntineutronicMatterReconstructionApparatus(IBlockProvider blockProvider, BlockPos pos,
             BlockState state) {
@@ -167,7 +169,7 @@ public class BEInterstellarAntineutronicMatterReconstructionApparatus
     @Override
     protected void onUpdateServer() {
         super.onUpdateServer();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -230,9 +232,14 @@ public class BEInterstellarAntineutronicMatterReconstructionApparatus
         return ticksRequired > 1 ? 1 / (double) ticksRequired : baselineMaxOperations;
     }
 
+    public FloatingLong getEnergyUsage() {
+        return lastEnergyUsage;
+    }
+
     @Override
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
         container.track(SyncableInt.create(this::getBaselineMaxOperations, v -> baselineMaxOperations = v));
         container.track(SyncableInt.create(() -> recipeTicksRequired, v -> recipeTicksRequired = v));
         container.track(SyncableBoolean.create(() -> itemNotComsumed, v -> itemNotComsumed = v));

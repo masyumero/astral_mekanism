@@ -1,0 +1,11 @@
+{
+    "type": "mekanism:crystallizing",
+    "chemicalType": "gas",
+    "input": {
+        "amount": 1000,
+        "gas": "astral_mekanism:astral_ether"
+    },
+    "output": {
+        "item": "minecraft:nether_star"
+    }
+}

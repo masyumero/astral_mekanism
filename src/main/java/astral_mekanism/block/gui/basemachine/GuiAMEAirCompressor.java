@@ -49,7 +49,7 @@ public class GuiAMEAirCompressor<BE extends BEAMEAirCompressor>
         }));
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 164, 15))
                 .warning(WarningTracker.WarningType.NOT_ENOUGH_ENERGY, () -> {
-                    MachineEnergyContainer<BEAMEAirCompressor> energyContainer = tile.getEnergyContainer();
+                    MachineEnergyContainer<?> energyContainer = tile.getEnergyContainer();
                     return energyContainer.getEnergyPerTick().greaterThan(energyContainer.getEnergy());
                 });
         addRenderableWidget(new GuiGasGauge(() -> tile.gasTank, () -> tile.getGasTanks(null), GaugeType.STANDARD, this, 6, 13))

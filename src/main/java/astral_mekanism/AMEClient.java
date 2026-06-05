@@ -116,8 +116,10 @@ public class AMEClient extends AstralMekanism {
     }
 
     private static void initScreens() {
+        registerScreenMek(AMEMachines.APPLIED_CRUSHER, GuiAppliedCrusher::new);
         registerScreenMek(AMEMachines.APPLIED_CHEMICAL_CRYSTALLIZER, GuiAppliedCrystallizer::new);
         registerScreenMek(AMEMachines.APPLIED_ELECTROLYTIC_SEPARATOR, GuiAppliedElectrolyticSeparator::new);
+        registerScreenMek(AMEMachines.APPLIED_ENRICHMENT_CHAMBER, GuiAppliedEnrichmentChamber::new);
         registerScreenMek(AMEMachines.APPLIED_FISSION_REACTOR, GuiAppliedFissionReactor::new);
         registerScreenMek(AMEMachines.APPLIED_FUSION_REACTOR, GuiAppliedMixingReactor<BEAppliedFusionReactor>::new);
         registerScreenMek(AMEMachines.APPLIED_ISOTPIC_CENTRIFUGE, GuiAppliedIsotopicCentrifuge::new);

@@ -35,7 +35,7 @@ public class GuiAMEPrecisionSawmill<BE extends BEAMEPrecisionSawmill>
         addRenderableWidget(new GuiUpArrow(this, 60, 38));
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 164, 15))
                 .warning(WarningType.NOT_ENOUGH_ENERGY, tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY));
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(new GuiSlot(SlotType.OUTPUT_WIDE, this, 111, 30))
                 .warning(WarningType.NO_SPACE_IN_OUTPUT, tile.getWarningCheck(RecipeError.NOT_ENOUGH_OUTPUT_SPACE))
                 .warning(WarningType.NO_SPACE_IN_OUTPUT,

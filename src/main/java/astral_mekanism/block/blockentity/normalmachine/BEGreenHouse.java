@@ -16,6 +16,7 @@ import mekanism.api.IContentsListener;
 import mekanism.api.Upgrade;
 import mekanism.api.fluid.IExtendedFluidTank;
 import mekanism.api.inventory.IInventorySlot;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
@@ -183,5 +184,10 @@ public class BEGreenHouse extends BlockEntityProgressMachine<CropSoilRecipe> imp
             recipeTicksRequired = v;
             recalculateRecipeTicks();
         }));
+    }
+
+    @Override
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
     }
 }

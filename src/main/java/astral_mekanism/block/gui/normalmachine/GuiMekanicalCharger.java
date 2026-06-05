@@ -19,7 +19,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public class GuiMekanicalCharger<BE extends BlockEntityRecipeMachine<ChargerRecipe> & IEnergizedMachine<BE>>
+public class GuiMekanicalCharger<BE extends BlockEntityRecipeMachine<ChargerRecipe> & IEnergizedMachine>
         extends GuiConfigurableTile<BE, MekanismTileContainer<BE>> {
 
     public GuiMekanicalCharger(MekanismTileContainer<BE> container, Inventory inv, Component title) {

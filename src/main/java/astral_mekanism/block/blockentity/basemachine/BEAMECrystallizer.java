@@ -38,7 +38,9 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.inventory.slot.chemical.MergedChemicalInventorySlot;
@@ -71,6 +73,8 @@ public abstract class BEAMECrystallizer extends TileEntityRecipeMachine<Chemical
     private MergedChemicalInventorySlot<MergedChemicalTank> inputSlot;
     private OutputInventorySlot outputSlot;
     private EnergyInventorySlot energySlot;
+
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMECrystallizer(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -186,7 +190,7 @@ public abstract class BEAMECrystallizer extends TileEntityRecipeMachine<Chemical
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
         inputSlot.fillChemicalTanks();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage= recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @NotNull
@@ -219,11 +223,17 @@ public abstract class BEAMECrystallizer extends TileEntityRecipeMachine<Chemical
     }
 
     public FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     public IChemicalTank<?, ?> getInputTank() {
         Current current = inputTank.getCurrent();
         return inputTank.getTankFromCurrent(current == Current.EMPTY ? Current.GAS : current);
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 }

@@ -55,7 +55,9 @@ import mekanism.common.integration.computer.SpecialComputerMethodWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
 import mekanism.common.integration.computer.computercraft.ComputerConstants;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.chemical.GasInventorySlot;
@@ -99,6 +101,8 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
     MergedChemicalInventorySlot<MergedChemicalTank> outputSlot;
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem", docPlaceholder = "energy slot")
     EnergyInventorySlot energySlot;
+
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMERadiationIrradiator(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -219,7 +223,7 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
         energySlot.fillContainerOrConvert();
         gasInputSlot.fillTankOrConvert();
         outputSlot.drainChemicalTanks();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -245,7 +249,8 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
     @Override
     public CachedRecipe<RadiationIrradiatingRecipe> createNewCachedRecipe(@NotNull RadiationIrradiatingRecipe recipe,
             int cacheIndex) {
-        return new FormulizedRadiationIrradiatingCachedRecipe(recipe, recheckAllRecipeErrors, itemInputHandler, gasInputHandler, outputHandler)
+        return new FormulizedRadiationIrradiatingCachedRecipe(recipe, recheckAllRecipeErrors, itemInputHandler,
+                gasInputHandler, outputHandler)
                 .setErrorsChanged(this::onErrorsChanged)
                 .setCanHolderFunction(() -> MekanismUtils.canFunction(this))
                 .setActive(this::setActive)
@@ -262,8 +267,8 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
 
     // Methods relating to IComputerTile
     @ComputerMethod(methodDescription = ComputerConstants.DESCRIPTION_GET_ENERGY_USAGE)
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerChemicalTankWrapper.class, methodNames = {
@@ -275,5 +280,11 @@ public abstract class BEAMERadiationIrradiator extends MSTileEntityRecipeMachine
                 current == MergedChemicalTank.Current.EMPTY ? MergedChemicalTank.Current.GAS : current);
     }
     // End methods IComputerTile
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
 
 }

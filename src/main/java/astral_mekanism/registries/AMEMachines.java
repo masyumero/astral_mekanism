@@ -16,8 +16,10 @@ import astral_mekanism.AMELang;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedRotaryCondensentrator;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedSPS;
 import astral_mekanism.block.block.AttributeIntTier;
+import astral_mekanism.block.blockentity.appliedmachine.BEAppliedCrusher;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedCrystallizer;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedElectrolyticSeparator;
+import astral_mekanism.block.blockentity.appliedmachine.BEAppliedEnrichmentChamber;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedFissionReactor;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedFusionReactor;
 import astral_mekanism.block.blockentity.appliedmachine.BEAppliedIsotopicCentrifuge;
@@ -224,6 +226,15 @@ public class AMEMachines {
         return result;
     }
 
+    public static final MachineRegistryObject<BEAppliedCrusher, ?, MekanismTileContainer<BEAppliedCrusher>, ?> APPLIED_CRUSHER = MACHINES
+            .registerSimple("applied_crusher",
+                    BEAppliedCrusher::new,
+                    BEAppliedCrusher.class,
+                    AMELang.DESCRIPTION_APPLIED_MACHINE,
+                    builder -> builder
+                            .changeAttributeUpgrade(EnumSet.of(Upgrade.ENERGY, Upgrade.MUFFLING))
+                            .withSound(MekanismSounds.CRUSHER));
+
     public static final MachineRegistryObject<BEAppliedCrystallizer, BlockTileModel<BEAppliedCrystallizer, BlockTypeMachine<BEAppliedCrystallizer>>, MekanismTileContainer<BEAppliedCrystallizer>, ItemBlockMachine> APPLIED_CHEMICAL_CRYSTALLIZER = MACHINES
             .registerSimple("applied_crystallizer",
                     BEAppliedCrystallizer::new,
@@ -241,6 +252,15 @@ public class AMEMachines {
                     builder -> builder
                             .changeAttributeUpgrade(EnumSet.of(Upgrade.ENERGY, Upgrade.MUFFLING))
                             .withSound(MekanismSounds.ELECTROLYTIC_SEPARATOR));
+
+    public static final MachineRegistryObject<BEAppliedEnrichmentChamber, ?, MekanismTileContainer<BEAppliedEnrichmentChamber>, ?> APPLIED_ENRICHMENT_CHAMBER = MACHINES
+            .registerSimple("applied_enrichment_chamber",
+                    BEAppliedEnrichmentChamber::new,
+                    BEAppliedEnrichmentChamber.class,
+                    AMELang.DESCRIPTION_APPLIED_MACHINE,
+                    builder -> builder
+                            .changeAttributeUpgrade(EnumSet.of(Upgrade.ENERGY, Upgrade.MUFFLING))
+                            .withSound(MekanismSounds.ENRICHMENT_CHAMBER));
 
     public static final MachineRegistryObject<BEAppliedFissionReactor, BlockTileModel<BEAppliedFissionReactor, BlockTypeMachine<BEAppliedFissionReactor>>, MekanismTileContainer<BEAppliedFissionReactor>, ItemBlockMachine> APPLIED_FISSION_REACTOR = MACHINES
             .registerSimple("applied_fission_reactor",

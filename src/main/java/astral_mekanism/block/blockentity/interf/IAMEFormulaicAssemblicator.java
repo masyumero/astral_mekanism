@@ -1,5 +1,6 @@
 package astral_mekanism.block.blockentity.interf;
 
+import mekanism.api.math.FloatingLong;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 
@@ -11,4 +12,6 @@ public interface IAMEFormulaicAssemblicator {
     CraftingRecipe getSavedRecipe();
 
     double getScaledProgress();
+
+    FloatingLong getEnergyUsage();
 }

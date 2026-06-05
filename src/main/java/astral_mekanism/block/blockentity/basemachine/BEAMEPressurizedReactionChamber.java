@@ -37,6 +37,8 @@ import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -84,6 +86,7 @@ public abstract class BEAMEPressurizedReactionChamber extends TileEntityRecipeMa
     OutputInventorySlot outputSlot;
     EnergyInventorySlot energySlot;
     private MachineEnergyContainer<BEAMEPressurizedReactionChamber> energyContainer;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMEPressurizedReactionChamber(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -102,7 +105,8 @@ public abstract class BEAMEPressurizedReactionChamber extends TileEntityRecipeMa
         itemInputHandler = InputHelper.getInputHandler(inputSlot, NOT_ENOUGH_ITEM_INPUT_ERROR);
         fluidInputHandler = InputHelper.getInputHandler(inputFluidTank, NOT_ENOUGH_FLUID_INPUT_ERROR);
         gasInputHandler = InputHelper.getInputHandler(inputGasTank, NOT_ENOUGH_GAS_INPUT_ERROR);
-        outputHandler = new IncomparableReactionOutputHandler(outputSlot, NOT_ENOUGH_SPACE_ITEM_OUTPUT_ERROR, outputGasTank,
+        outputHandler = new IncomparableReactionOutputHandler(outputSlot, NOT_ENOUGH_SPACE_ITEM_OUTPUT_ERROR,
+                outputGasTank,
                 NOT_ENOUGH_SPACE_GAS_OUTPUT_ERROR);
     }
 
@@ -171,7 +175,7 @@ public abstract class BEAMEPressurizedReactionChamber extends TileEntityRecipeMa
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -220,7 +224,7 @@ public abstract class BEAMEPressurizedReactionChamber extends TileEntityRecipeMa
     }
 
     public FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     public BasicFluidTank getFluidTank() {
@@ -237,6 +241,12 @@ public abstract class BEAMEPressurizedReactionChamber extends TileEntityRecipeMa
 
     public double getScaledProgress() {
         return getActive() ? 1 : 0;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 
 }

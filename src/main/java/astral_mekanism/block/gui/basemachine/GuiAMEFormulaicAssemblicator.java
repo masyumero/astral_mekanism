@@ -40,7 +40,7 @@ public class GuiAMEFormulaicAssemblicator<BE extends TileEntityConfigurableMachi
         addRenderableWidget(new GuiProgress(tile::getScaledProgress, ProgressType.BAR, this, 86, 38))
                 .jeiCategories(MekanismJEIRecipeType.VANILLA_CRAFTING);
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 224, 15));
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(new ToggleButton(this, 86, 17, 18, 16,
                 new ResourceLocation("minecraft", "textures/block/redstone_torch_off.png"),
                 new ResourceLocation("minecraft", "textures/block/redstone_torch.png"),

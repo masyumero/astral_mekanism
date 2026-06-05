@@ -17,10 +17,10 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 
-public interface IEnergizedSmeltingFactory<BE extends TileEntityMekanism & IEnergizedSmeltingFactory<BE> & IEnergizedMachine<BE>>
+public interface IEnergizedSmeltingFactory<BE extends TileEntityMekanism & IAMEFactory<BE>>
         extends
         IUnifiedSingelRecipeLookupHandler<ItemStack, SmeltingRecipe, GeneralSingleItem<Container, SmeltingRecipe>>,
-        IEnergizedMachine<BE>, IHasGasMode, ISustainedData, IAMEFactory<BE> {
+        IEnergizedMachine, IHasGasMode, ISustainedData, IAMEFactory<BE> {
 
     public static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_INPUT,

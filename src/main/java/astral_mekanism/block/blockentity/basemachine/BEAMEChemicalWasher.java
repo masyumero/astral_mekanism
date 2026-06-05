@@ -39,8 +39,10 @@ import mekanism.common.integration.computer.SpecialComputerMethodWrapper.Compute
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
 import mekanism.common.integration.computer.computercraft.ComputerConstants;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.FluidInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -97,6 +99,8 @@ public abstract class BEAMEChemicalWasher extends TileEntityRecipeMachine<FluidS
     SlurryInventorySlot slurryOutputSlot;
     @WrappingComputerMethod(wrapper = ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem", docPlaceholder = "energy slot")
     EnergyInventorySlot energySlot;
+
+    FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMEChemicalWasher(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -176,13 +180,13 @@ public abstract class BEAMEChemicalWasher extends TileEntityRecipeMachine<FluidS
         energySlot.fillContainerOrConvert();
         fluidSlot.fillTank(fluidOutputSlot);
         slurryOutputSlot.drainTank();
-        recipeCacheLookupMonitor.updateAndProcess(energyContainer);
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @NotNull
     @ComputerMethod(nameOverride = "getEnergyUsage", methodDescription = ComputerConstants.DESCRIPTION_GET_ENERGY_USAGE)
     public FloatingLong getEnergyUsed() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     @NotNull
@@ -227,5 +231,11 @@ public abstract class BEAMEChemicalWasher extends TileEntityRecipeMachine<FluidS
 
     public MachineEnergyContainer<BEAMEChemicalWasher> getEnergyContainer() {
         return energyContainer;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsed, v -> lastEnergyUsage = v));
     }
 }

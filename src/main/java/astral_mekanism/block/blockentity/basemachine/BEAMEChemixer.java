@@ -32,6 +32,8 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -72,6 +74,8 @@ public abstract class BEAMEChemixer extends TileEntityRecipeMachine<ChemixerReci
     private OutputInventorySlot outputSlot;
     private EnergyInventorySlot energySlot;
     private MachineEnergyContainer<BEAMEChemixer> energyContainer;
+
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMEChemixer(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -149,7 +153,7 @@ public abstract class BEAMEChemixer extends TileEntityRecipeMachine<ChemixerReci
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage= recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @NotNull
@@ -172,8 +176,8 @@ public abstract class BEAMEChemixer extends TileEntityRecipeMachine<ChemixerReci
         return inputGasTank;
     }
 
-    FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+    public FloatingLong getEnergyUsage() {
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     @Override
@@ -189,5 +193,11 @@ public abstract class BEAMEChemixer extends TileEntityRecipeMachine<ChemixerReci
     }
 
     protected abstract int getBaselineMaxOperations();
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
 
 }

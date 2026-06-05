@@ -43,7 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BEAstralMekanicalCharger extends BlockEntityRecipeMachine<ChargerRecipe> implements
         IUnifiedSingelRecipeLookupHandler<ItemStack, ChargerRecipe, GeneralSingleItem<Container, ChargerRecipe>>,
-        IEnergizedMachine<BEAstralMekanicalCharger> {
+        IEnergizedMachine {
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,

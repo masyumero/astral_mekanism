@@ -8,6 +8,7 @@ import astral_mekanism.generalrecipe.lookup.cache.recipe.CropSoilInputRecipeCach
 import astral_mekanism.generalrecipe.lookup.handler.IUnifiedRecipeTypedLookupHandler;
 import astral_mekanism.generalrecipe.recipe.CropSoilRecipe;
 import mekanism.api.fluid.IExtendedFluidTank;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
@@ -65,4 +66,6 @@ public interface IGreenHouse
     public MachineEnergyContainer<?> getEnergyContainer();
 
     public double getScaledProgress();
+
+    FloatingLong getEnergyUsage();
 }

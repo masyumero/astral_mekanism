@@ -24,6 +24,7 @@ import mekanism.api.chemical.ChemicalTankBuilder;
 import mekanism.api.chemical.infuse.IInfusionTank;
 import mekanism.api.chemical.infuse.InfuseType;
 import mekanism.api.chemical.infuse.InfusionStack;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
@@ -38,6 +39,7 @@ import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
 import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.sync.SyncableEnum;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -67,6 +69,7 @@ public abstract class BETickWorkEnergizedSmelter<BE extends BETickWorkEnergizedS
     private final IInputHandler<ItemStack> inputHandler;
     private final IOutputHandler<ItemInfuseOutput> outputHandler;
     private GasMode gasMode;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BETickWorkEnergizedSmelter(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -123,7 +126,7 @@ public abstract class BETickWorkEnergizedSmelter<BE extends BETickWorkEnergizedS
     @Override
     protected void onUpdateServer() {
         super.onUpdateServer();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
         infusionSlot.drainTank();
         energySlot.fillContainerOrConvert();
     }
@@ -178,6 +181,7 @@ public abstract class BETickWorkEnergizedSmelter<BE extends BETickWorkEnergizedS
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
         container.track(SyncableEnum.create(GasMode::byIndexStatic, GasMode.IDLE, this::getGasMode, v -> gasMode = v));
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 
     @Override
@@ -200,6 +204,11 @@ public abstract class BETickWorkEnergizedSmelter<BE extends BETickWorkEnergizedS
         Map<String, String> remap = new Object2ObjectOpenHashMap<>();
         remap.put(NBTConstants.DUMP_MODE, NBTConstants.DUMP_MODE);
         return remap;
+    }
+
+    @Override
+    public FloatingLong getEnergyUsage() {
+        return lastEnergyUsage;
     }
 
 }

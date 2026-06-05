@@ -60,7 +60,7 @@ public class BEAMEAirCompressor extends TileEntityConfigurableMachine implements
             "getGas", "getGasCapacity", "getGasNeeded", "getGasFilledPercentage" }, docPlaceholder = "buffer tank")
     public IGasTank gasTank;
 
-    private MachineEnergyContainer<BEAMEAirCompressor> energyContainer;
+    private MachineEnergyContainer<?> energyContainer;
 
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getInputItem", docPlaceholder = "")
     GasInventorySlot inputSlot;
@@ -192,7 +192,7 @@ public class BEAMEAirCompressor extends TileEntityConfigurableMachine implements
         return UpgradeUtils.getMultScaledInfo(this, upgrade);
     }
 
-    public MachineEnergyContainer<BEAMEAirCompressor> getEnergyContainer() {
+    public MachineEnergyContainer<?> getEnergyContainer() {
         return energyContainer;
     }
 

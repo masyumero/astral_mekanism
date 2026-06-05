@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class BlockEntityRecipeFactory<RECIPE extends Recipe<?>, BE extends BlockEntityRecipeFactory<RECIPE, BE>>
         extends TileEntityConfigurableMachine
-        implements IUnifiedRecipeLookUpHandler<RECIPE>, IEnergizedMachine<BE>, IAMEFactory<BE> {
+        implements IUnifiedRecipeLookUpHandler<RECIPE>, IEnergizedMachine, IAMEFactory<BE> {
 
     public AMETier tier;
     protected UnifiedRecipeCacheLookupMonitor<RECIPE>[] recipeCacheLookupMonitors;
@@ -236,7 +236,7 @@ public abstract class BlockEntityRecipeFactory<RECIPE extends Recipe<?>, BE exte
         lastUsage = isActive ? prev.minusEqual(energyContainer.getEnergy()) : FloatingLong.ZERO;
     }
 
-    public FloatingLong getLastUsage() {
+    public FloatingLong getEnergyUsage() {
         return lastUsage;
     }
 
@@ -244,7 +244,7 @@ public abstract class BlockEntityRecipeFactory<RECIPE extends Recipe<?>, BE exte
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
         errorTracker.track(container);
-        container.track(SyncableFloatingLong.create(this::getLastUsage, value -> lastUsage = value));
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, value -> lastUsage = value));
     }
 
     @Override

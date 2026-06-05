@@ -27,6 +27,7 @@ import astral_mekanism.recipes.recipe.MekanicalTransformRecipe;
 import astral_mekanism.registries.AMERecipeTypes;
 import mekanism.api.IContentsListener;
 import mekanism.api.fluid.IExtendedFluidTank;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
@@ -44,6 +45,7 @@ import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
 import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
 import mekanism.common.inventory.container.sync.SyncableBoolean;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.FluidInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
@@ -110,6 +112,7 @@ public abstract class BEAbstractTransformer extends TileEntityConfigurableMachin
     protected UnifiedRecipeCacheLookupMonitor<TransformRecipe> ae2LookupMonitor;
     protected MekanicalTransformRecipeLookUpObject mekanicalLookUpObject;
     protected RecipeCacheLookupMonitor<MekanicalTransformRecipe> mekanicalLookupMonitor;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAbstractTransformer(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state);
@@ -280,10 +283,10 @@ public abstract class BEAbstractTransformer extends TileEntityConfigurableMachin
         super.onUpdateServer();
         if (mode) {
             mekanicalLookUpObject.getRecipeType().getInputCache().initCacheIfNeeded(level);
-            mekanicalLookupMonitor.updateAndProcess();
+            lastEnergyUsage = mekanicalLookupMonitor.updateAndProcess(energyContainer);
         } else {
             ae2LookUpObject.getRecipeType().getInputCache().initCacheIfNeeded(level);
-            ae2LookupMonitor.updateAndProcess();
+            lastEnergyUsage = ae2LookupMonitor.updateAndProcess(energyContainer);
         }
         fluidSlotIA.fillTank(fluidSlotOA);
         fluidSlotIB.fillTank(fluidSlotOB);
@@ -318,9 +321,14 @@ public abstract class BEAbstractTransformer extends TileEntityConfigurableMachin
         nbtTags.putBoolean(modeNBTtag, mode);
     }
 
+    public FloatingLong getEnergyUsage() {
+        return lastEnergyUsage;
+    }
+
     @Override
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
         container.trackArray(trackedErrors);
         container.track(SyncableBoolean.create(() -> mode, v -> mode = v));
     }
@@ -361,6 +369,10 @@ public abstract class BEAbstractTransformer extends TileEntityConfigurableMachin
 
     public boolean getMode() {
         return mode;
+    }
+
+    public MachineEnergyContainer<?> getEnergyContainer() {
+        return energyContainer;
     }
 
     protected abstract int fluidTankCapacity();

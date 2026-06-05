@@ -33,7 +33,7 @@ public class GuiAMEElectricMachine<MACHINE extends BEAMEElectricMachine> extends
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 164, 15))
                 .warning(WarningType.NOT_ENOUGH_ENERGY,
                         tile.getWarningCheck(RecipeError.NOT_ENOUGH_ENERGY));
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(new GuiProgress(tile::getActive, ProgressType.BAR, this, 86, 38)
                 .jeiCategories(MekanismJEIRecipeType.findType(new ResourceLocation(tile.getJEI()))))
                 .warning(WarningType.INPUT_DOESNT_PRODUCE_OUTPUT,

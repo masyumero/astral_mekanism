@@ -4,6 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import astral_mekanism.block.blockentity.interf.IEnergizedMachine;
 import astral_mekanism.recipes.cachedRecipe.FormulizedItemGasToItemCachedRecipe;
 import astral_mekanism.recipes.output.IncomparableItemOutputHandler;
 import mekanism.api.IContentsListener;
@@ -26,6 +27,8 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -43,7 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class BEAMEAdvancedMachine
         extends TileEntityRecipeMachine<ItemStackGasToItemStackRecipe>
-        implements ItemChemicalRecipeLookupHandler<Gas, GasStack, ItemStackGasToItemStackRecipe> {
+        implements ItemChemicalRecipeLookupHandler<Gas, GasStack, ItemStackGasToItemStackRecipe>, IEnergizedMachine {
 
     protected static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
@@ -66,6 +69,8 @@ public abstract class BEAMEAdvancedMachine
     private final int multiply;
 
     private final String jeiRecipeType;
+
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     protected BEAMEAdvancedMachine(IBlockProvider blockProvider, BlockPos pos, BlockState state,
             String jeiRecipeType, int multiply) {
@@ -134,13 +139,15 @@ public abstract class BEAMEAdvancedMachine
         super.onUpdateServer();
         this.energyInventorySlot.fillContainerOrConvert();
         this.gasInventorySlot.fillTankOrConvert();
-        this.recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = this.recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
-    public CachedRecipe<ItemStackGasToItemStackRecipe> createNewCachedRecipe(@NotNull ItemStackGasToItemStackRecipe recipe, int index) {
+    public CachedRecipe<ItemStackGasToItemStackRecipe> createNewCachedRecipe(
+            @NotNull ItemStackGasToItemStackRecipe recipe, int index) {
 
-        CachedRecipe<ItemStackGasToItemStackRecipe> cachedRecipe = new FormulizedItemGasToItemCachedRecipe(recipe, recheckAllRecipeErrors, inputHandler, gasInputHandler, outputHandler, multiply)
+        CachedRecipe<ItemStackGasToItemStackRecipe> cachedRecipe = new FormulizedItemGasToItemCachedRecipe(recipe,
+                recheckAllRecipeErrors, inputHandler, gasInputHandler, outputHandler, multiply)
                 .setErrorsChanged(this::onErrorsChanged)
                 .setCanHolderFunction(() -> MekanismUtils.canFunction(this))
                 .setActive(this::setActive)
@@ -159,15 +166,26 @@ public abstract class BEAMEAdvancedMachine
     }
 
     public FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     public String getJEI() {
         return this.jeiRecipeType;
     }
 
-    public MachineEnergyContainer<BEAMEAdvancedMachine> getEnergyContainer(){
+    public MachineEnergyContainer<?> getEnergyContainer() {
         return this.energyContainer;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
+
+    @Override
+    public double getProgressScaled() {
+        return getActive() ? 1 : 0;
     }
 
 }

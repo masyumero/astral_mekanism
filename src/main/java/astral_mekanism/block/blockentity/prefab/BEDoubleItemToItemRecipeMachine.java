@@ -21,7 +21,9 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.ContainerSlotType;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -56,6 +58,7 @@ public abstract class BEDoubleItemToItemRecipeMachine extends TileEntityRecipeMa
     protected InputInventorySlot extraInputSlot;
     protected OutputInventorySlot outputSlot;
     protected EnergyInventorySlot energySlot;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     protected BEDoubleItemToItemRecipeMachine(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -115,7 +118,7 @@ public abstract class BEDoubleItemToItemRecipeMachine extends TileEntityRecipeMa
     protected void onUpdateServer() {
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Nullable
@@ -155,9 +158,15 @@ public abstract class BEDoubleItemToItemRecipeMachine extends TileEntityRecipeMa
     }
 
     public FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
 
     public abstract String getJEI();
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
 
 }

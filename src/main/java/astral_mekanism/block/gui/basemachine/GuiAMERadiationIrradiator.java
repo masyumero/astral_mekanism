@@ -38,7 +38,7 @@ public class GuiAMERadiationIrradiator<BE extends BEAMERadiationIrradiator>
                         tile.getWarningCheck(CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_ENERGY))
                 .warning(WarningTracker.WarningType.NOT_ENOUGH_ENERGY_REDUCED_RATE,
                         tile.getWarningCheck(CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_ENERGY_REDUCED_RATE));
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
         addRenderableWidget(
                 new GuiGasGauge(() -> tile.injectTank, () -> tile.getGasTanks(null), GaugeType.STANDARD, this, 28, 13))
                 .warning(WarningTracker.WarningType.NO_MATCHING_RECIPE,

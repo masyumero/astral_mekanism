@@ -2,6 +2,7 @@ package astral_mekanism.block.blockentity.interf;
 
 import astral_mekanism.recipes.lookup.AMIRecipeLookUpHandler.TripleItemRecipeLookUpHandler;
 import astral_mekanism.recipes.recipe.TripleItemToItemRecipe;
+import mekanism.api.math.FloatingLong;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.tile.prefab.TileEntityRecipeMachine;
 
@@ -13,4 +14,6 @@ public interface ITripleItemToItemMachine<BE extends TileEntityRecipeMachine<Tri
     public abstract double getProgressScaled();
 
     public abstract String getJEI();
+
+    FloatingLong getEnergyUsage();
 }

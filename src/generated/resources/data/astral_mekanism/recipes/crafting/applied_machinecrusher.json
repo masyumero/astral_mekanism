@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "astral_mekanism:autonomy_alloy_ingot"
+    },
+    "C": {
+      "item": "astral_mekanism:autonomy_processor"
+    },
+    "X": {
+      "item": "astral_mekanism:astral_crusher"
+    }
+  },
+  "pattern": [
+    "ACA",
+    "CXC",
+    "ACA"
+  ],
+  "result": {
+    "item": "astral_mekanism:applied_crusher"
+  },
+  "show_notification": true
+}

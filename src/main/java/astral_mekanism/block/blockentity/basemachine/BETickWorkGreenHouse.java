@@ -15,6 +15,7 @@ import astral_mekanism.generalrecipe.recipe.CropSoilRecipe;
 import mekanism.api.IContentsListener;
 import mekanism.api.fluid.IExtendedFluidTank;
 import mekanism.api.inventory.IInventorySlot;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
@@ -27,7 +28,9 @@ import mekanism.common.capabilities.holder.fluid.FluidTankHelper;
 import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.FluidInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
@@ -52,6 +55,7 @@ public abstract class BETickWorkGreenHouse extends BlockEntityRecipeMachine<Crop
     private OutputInventorySlot[] outputSlots;
     private FluidInventorySlot fluidSlot;
     private EnergyInventorySlot energySlot;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     private final IInputHandler<ItemStack> cropHandler;
     private final IInputHandler<ItemStack> soilHandler;
@@ -123,7 +127,7 @@ public abstract class BETickWorkGreenHouse extends BlockEntityRecipeMachine<Crop
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
         fluidSlot.fillTank();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage= recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -159,5 +163,16 @@ public abstract class BETickWorkGreenHouse extends BlockEntityRecipeMachine<Crop
     @Override
     public double getScaledProgress() {
         return getActive() ? 1 : 0;
+    }
+
+    @Override
+    public FloatingLong getEnergyUsage() {
+        return lastEnergyUsage;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 }

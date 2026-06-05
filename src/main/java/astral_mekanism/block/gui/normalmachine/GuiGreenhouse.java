@@ -33,7 +33,7 @@ public class GuiGreenHouse<BE extends TileEntityConfigurableMachine & IGreenHous
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 170, 16));
         addRenderableWidget(new GuiProgress(tile::getScaledProgress, ProgressType.BAR, this, 68, 38))
                 .jeiCategories(AMEJEIRecipeType.CROP_SOIL);
-        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getActive));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
     }
 
     @Override

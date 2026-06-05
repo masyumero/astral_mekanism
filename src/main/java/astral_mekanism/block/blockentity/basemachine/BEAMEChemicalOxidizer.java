@@ -5,6 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import astral_mekanism.block.blockentity.interf.IEnergizedMachine;
 import mekanism.api.IContentsListener;
 import mekanism.api.RelativeSide;
 import mekanism.api.chemical.ChemicalTankBuilder;
@@ -28,7 +29,9 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
 import mekanism.common.inventory.slot.chemical.GasInventorySlot;
@@ -47,7 +50,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class BEAMEChemicalOxidizer extends TileEntityRecipeMachine<ItemStackToGasRecipe>
-        implements ItemRecipeLookupHandler<ItemStackToGasRecipe> {
+        implements ItemRecipeLookupHandler<ItemStackToGasRecipe>, IEnergizedMachine {
     private static final List<RecipeError> TRACKED_ERROR_TYPES = List.of(
             RecipeError.NOT_ENOUGH_ENERGY,
             RecipeError.NOT_ENOUGH_INPUT,
@@ -63,6 +66,8 @@ public abstract class BEAMEChemicalOxidizer extends TileEntityRecipeMachine<Item
     private InputInventorySlot inputSlot;
     private GasInventorySlot outputSlot;
     private EnergyInventorySlot energySlot;
+
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     public BEAMEChemicalOxidizer(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state, TRACKED_ERROR_TYPES);
@@ -118,7 +123,7 @@ public abstract class BEAMEChemicalOxidizer extends TileEntityRecipeMachine<Item
         super.onUpdateServer();
         energySlot.fillContainerOrConvert();
         outputSlot.drainTank();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @NotNull
@@ -151,10 +156,20 @@ public abstract class BEAMEChemicalOxidizer extends TileEntityRecipeMachine<Item
     }
 
     public FloatingLong getEnergyUsage() {
-        return getActive() ? energyContainer.getEnergyPerTick() : FloatingLong.ZERO;
+        return getActive() ? lastEnergyUsage : FloatingLong.ZERO;
     }
-    
+
     protected abstract int getBaselineMaxOperations();
 
-}
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
 
+    @Override
+    public double getProgressScaled() {
+        return getActive() ? 1 : 0;
+    }
+
+}

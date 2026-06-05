@@ -20,6 +20,7 @@ import mekanism.api.chemical.gas.IGasTank;
 import mekanism.api.chemical.infuse.IInfusionTank;
 import mekanism.api.chemical.infuse.InfuseType;
 import mekanism.api.chemical.infuse.InfusionStack;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
@@ -37,6 +38,8 @@ import mekanism.common.capabilities.holder.fluid.FluidTankHelper;
 import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableFloatingLong;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.chemical.GasInventorySlot;
 import mekanism.common.inventory.slot.chemical.InfusionInventorySlot;
@@ -72,6 +75,7 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
     private GasInventorySlot gasSlot;
     private InfusionInventorySlot infusionSlot;
     private EnergyInventorySlot energySlot;
+    private FloatingLong lastEnergyUsage = FloatingLong.ZERO;
 
     private final IInputHandler<GasStack> gasInputHandler;
     private final IInputHandler<InfusionStack> infusionInputHandler;
@@ -161,7 +165,7 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
         gasSlot.fillTankOrConvert();
         infusionSlot.fillTankOrConvert();
         energySlot.fillContainerOrConvert();
-        recipeCacheLookupMonitor.updateAndProcess();
+        lastEnergyUsage = recipeCacheLookupMonitor.updateAndProcess(energyContainer);
     }
 
     @Override
@@ -228,6 +232,16 @@ public abstract class BEAbstractInfusingCondensentrator extends TileEntityRecipe
 
     private boolean containsRecipeBA(Gas gas, InfuseType infuseType) {
         return containsRecipeBA(gas.getStack(1), infuseType.getStack(1));
+    }
+
+    public FloatingLong getEnergyUsage() {
+        return lastEnergyUsage;
+    }
+
+    @Override
+    public void addContainerTrackers(MekanismContainer container) {
+        super.addContainerTrackers(container);
+        container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
     }
 
 }

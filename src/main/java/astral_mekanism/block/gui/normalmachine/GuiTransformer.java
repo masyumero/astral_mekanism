@@ -16,6 +16,7 @@ import mekanism.client.gui.element.gauge.GaugeType;
 import mekanism.client.gui.element.gauge.GuiFluidGauge;
 import mekanism.client.gui.element.progress.GuiProgress;
 import mekanism.client.gui.element.progress.ProgressType;
+import mekanism.client.gui.element.tab.GuiEnergyTab;
 import mekanism.common.inventory.warning.WarningTracker.WarningType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -58,6 +59,7 @@ public class GuiTransformer<BE extends BEAbstractTransformer>
         addRenderableWidget(new GuiDownArrow(this, 14, 39));
         addRenderableWidget(new GuiDownArrow(this, 86, 39));
         addRenderableWidget(new GuiDownArrow(this, 173, 39));
+        addRenderableWidget(new GuiEnergyTab(this, tile.getEnergyContainer(), tile::getEnergyUsage));
     }
 
     @Override

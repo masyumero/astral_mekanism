@@ -31,6 +31,7 @@ import mekanism.api.chemical.infuse.IInfusionTank;
 import mekanism.api.chemical.infuse.InfuseType;
 import mekanism.api.chemical.infuse.InfusionStack;
 import mekanism.api.inventory.IInventorySlot;
+import mekanism.api.math.FloatingLong;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.api.recipes.cache.CachedRecipe.OperationTracker.RecipeError;
 import mekanism.api.recipes.inputs.IInputHandler;
@@ -65,6 +66,7 @@ public class BEEnergizedSmeltingFactory extends BlockEntityProgressFactory<Smelt
     private final IInputHandler<ItemStack>[] inputHandlers;
     private final IOutputHandler<ItemInfuseOutput>[] outputHandlers;
     private GasMode gasMode;
+    private FloatingLong energyUsed = FloatingLong.ZERO;
 
     @SuppressWarnings("unchecked")
     public BEEnergizedSmeltingFactory(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
@@ -231,6 +233,11 @@ public class BEEnergizedSmeltingFactory extends BlockEntityProgressFactory<Smelt
     @Override
     public List<Component> getInfo(@NotNull Upgrade upgrade) {
         return UpgradeUtils.getMultScaledInfo(this, upgrade);
+    }
+
+    @Override
+    public FloatingLong getEnergyUsage() {
+        return energyUsed;
     }
 
 }
