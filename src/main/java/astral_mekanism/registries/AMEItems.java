@@ -7,7 +7,9 @@ import appeng.api.parts.PartModels;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import astral_mekanism.AMEConstants;
+import astral_mekanism.AMETier;
 import astral_mekanism.enums.AMEUpgrade;
+import astral_mekanism.item.AMEItemTierInstaller;
 import astral_mekanism.item.DegitalMinerFilterToolItem;
 import astral_mekanism.item.GlintItem;
 import astral_mekanism.item.GlintItemNameColored;
@@ -31,6 +33,8 @@ import mekanism.common.registration.impl.ItemRegistryObject;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AMEItems {
     public static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(AMEConstants.MODID);
@@ -212,7 +216,22 @@ public class AMEItems {
         return result;
     })).get();
 
+    public static final ItemRegistryObject<AMEItemTierInstaller> ESSENTIAL_TIER_INSTALLER = registerInstaller(null, AMETier.ESSENTIAL);
+    public static final ItemRegistryObject<AMEItemTierInstaller> BASIC_STANDARD_TIER_INSTALLER = registerInstaller(AMETier.ESSENTIAL, AMETier.BASIC);
+    public static final ItemRegistryObject<AMEItemTierInstaller> ADVANCED_TIER_INSTALLER = registerInstaller(AMETier.BASIC, AMETier.ADVANCED);
+    public static final ItemRegistryObject<AMEItemTierInstaller> ELITE_TIER_INSTALLER = registerInstaller(AMETier.ADVANCED, AMETier.ELITE);
+    public static final ItemRegistryObject<AMEItemTierInstaller> ENCHANTED_ULTIMATE_TIER_INSTALLER = registerInstaller(AMETier.ELITE, AMETier.ULTIMATE);
+    public static final ItemRegistryObject<AMEItemTierInstaller> ABSOLUTE_OVERCLOCKED_TIER_INSTALLER = registerInstaller(AMETier.ULTIMATE, AMETier.ABSOLUTE);
+    public static final ItemRegistryObject<AMEItemTierInstaller> SUPREME_QUANTUM_TIER_INSTALLER = registerInstaller(AMETier.ABSOLUTE, AMETier.SUPREME);
+    public static final ItemRegistryObject<AMEItemTierInstaller> COSMIC_DENSE_TIER_INSTALLER = registerInstaller(AMETier.SUPREME, AMETier.COSMIC);
+    public static final ItemRegistryObject<AMEItemTierInstaller> INFINITE_MULTIVERSAL_TIER_INSTALLER = registerInstaller(AMETier.COSMIC, AMETier.INFINITE);
+    public static final ItemRegistryObject<AMEItemTierInstaller> ASTRONOMICAL_TIER_INSTALLER = registerInstaller(AMETier.INFINITE, AMETier.ASTRAL);
+
     private static ItemRegistryObject<ItemUpgrade> registerUpgrade(Upgrade type) {
         return ITEMS.register(type.getRawName() + "_upgrade", properties -> new ItemUpgrade(type, properties));
+    }
+
+    private static ItemRegistryObject<AMEItemTierInstaller> registerInstaller(@Nullable AMETier fromTier, @NotNull AMETier toTier) {
+        return ITEMS.register(toTier.nameForAstral + "_tier_installer", properties -> new AMEItemTierInstaller(fromTier, toTier, properties));
     }
 }
