@@ -3,6 +3,7 @@ package astral_mekanism.block.blockentity.normalmachine;
 import java.util.List;
 import java.util.Map;
 
+import astral_mekanism.upgrade.AMESmeltingUpgradeData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,6 +186,11 @@ public class BEEssentialEnergizedSmelter extends BlockEntityProgressMachine<Smel
         super.addContainerTrackers(container);
         container.track(SyncableEnum.create(GasMode::byIndexStatic, GasMode.IDLE, this::getGasMode, v -> gasMode = v));
         container.track(SyncableFloatingLong.create(this::getEnergyUsage, v -> lastEnergyUsage = v));
+    }
+
+    @Override
+    public AMESmeltingUpgradeData getUpgradeData() {
+        return new AMESmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), gasMode, energySlot, infusionTank, inputSlot, outputSlot, getComponents());
     }
 
     @Override

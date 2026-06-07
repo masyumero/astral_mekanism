@@ -1,8 +1,11 @@
 package astral_mekanism.block.blockentity.astralfactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import astral_mekanism.upgrade.AMESmeltingUpgradeData;
+import mekanism.common.upgrade.IUpgradeData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -172,6 +175,30 @@ public class BEAstralEnergizedSmeltingFactory
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
         container.track(SyncableEnum.create(GasMode::byIndexStatic, GasMode.IDLE, this::getGasMode, v -> gasMode = v));
+    }
+
+    @Override
+    public void parseUpgradeData(@NotNull IUpgradeData upgradeData) {
+        if (upgradeData instanceof AMESmeltingUpgradeData data) {
+
+            super.parseUpgradeData(data);
+
+            infusionTank.deserializeNBT(data.stored.serializeNBT());
+            gasMode = data.gasMode;
+            for (int i = 0; i < data.inputSlots.size(); i++) {
+                inputSlots[i].deserializeNBT(data.inputSlots.get(i).serializeNBT());
+            }
+            for (int i = 0; i < data.outputSlots.size(); i++) {
+                outputSlots[i].setStack(data.outputSlots.get(i).getStack());
+            }
+        } else {
+            super.parseUpgradeData(upgradeData);
+        }
+    }
+
+    @Override
+    public AMESmeltingUpgradeData getUpgradeData() {
+        return new AMESmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), new int[] {0}, gasMode, energySlot, infusionTank, List.of(inputSlots), List.of(outputSlots), false, getComponents());
     }
 
     @Override
