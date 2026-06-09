@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import astral_mekanism.block.block.AMEAttributeUpgradeable;
+import astral_mekanism.util.AMEEnumUtils;
 import com.fxd927.mekanismelements.common.config.MSConfig;
 import com.fxd927.mekanismelements.common.content.blocktype.MSBlockShapes;
 import com.jerry.mekanism_extras.api.ExtraUpgrade;
@@ -360,8 +361,7 @@ public class AMEMachines {
                     .withSound(MekanismSounds.ENERGIZED_SMELTER)
                     .withEnergyConfig(MekanismConfig.usage.energizedSmelter, MAX_SUPPLIER);
                 if (t.ordinal() < AMETier.values().length - 1) {
-                    AMETier[] tierValues = AMETier.values();
-                    builder.with(new AMEAttributeUpgradeable(() -> getAstralSmeltingFactory(tierValues[t.ordinal() + 1]).getBlockObject()));
+                    builder.with(new AMEAttributeUpgradeable(() -> getAstralSmeltingFactory(AMEEnumUtils.AME_TIERS[t.ordinal() + 1]).getBlockObject()));
                 }
                 return builder;
             });
@@ -826,8 +826,7 @@ public class AMEMachines {
                 builder.changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
                                 AMEUpgrade.RADIOACTIVE_SEALING.getValue()));
                 if (tier.ordinal() < AMETier.values().length - 1) {
-                    AMETier[] tierValues = AMETier.values();
-                    builder.with(new AMEAttributeUpgradeable(() -> getCompactFir(tierValues[tier.ordinal() + 1]).getBlockObject()));
+                    builder.with(new AMEAttributeUpgradeable(() -> getCompactFir(AMEEnumUtils.AME_TIERS[tier.ordinal() + 1]).getBlockObject()));
                 }
                 return builder;
             });
@@ -876,8 +875,7 @@ public class AMEMachines {
                         .withSound(MekanismSounds.RESISTIVE_HEATER)
                         .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, AMEUpgrade.WATER_SUPPLY.getValue()));
                 if (tier.ordinal() < AMETier.values().length - 1) {
-                    AMETier[] tierValues = AMETier.values();
-                    builder.with(new AMEAttributeUpgradeable(() -> getCompactTep(tierValues[tier.ordinal() + 1]).getBlockObject()));
+                    builder.with(new AMEAttributeUpgradeable(() -> getCompactTep(AMEEnumUtils.AME_TIERS[tier.ordinal() + 1]).getBlockObject()));
                 }
                 return builder;
             });
@@ -1385,8 +1383,7 @@ public class AMEMachines {
                         .withEnergyConfig(MekanismConfig.usage.energizedSmelter,
                                 () -> MekanismConfig.storage.energizedSmelter.get().multiply(tier.processes));
                 if (tier.ordinal() < AMETier.values().length - 1) {
-                    AMETier[] tierValues = AMETier.values();
-                    builder.with(new AMEAttributeUpgradeable(() -> getAstralSmeltingFactory(tierValues[tier.ordinal() + 1]).getBlockObject()));
+                    builder.with(new AMEAttributeUpgradeable(() -> getSmeltingFactory(AMEEnumUtils.AME_TIERS[tier.ordinal() + 1]).getBlockObject()));
                 }
                 return builder;
             });
