@@ -239,6 +239,10 @@ public class AMEMachines {
         return COMPACT_TEP.get(tier);
     }
 
+    private static MachineRegistryObject<BECompactFissionReactor, BlockTileModel<BECompactFissionReactor, BlockTypeMachine<BECompactFissionReactor>>, MekanismTileContainer<BECompactFissionReactor>, ItemBlockMachine> getCompactFir(AMETier tier) {
+        return COMPACT_FIR.get(tier);
+    }
+
     public static final MachineRegistryObject<BEAppliedCrusher, ?, MekanismTileContainer<BEAppliedCrusher>, ?> APPLIED_CRUSHER = MACHINES
             .registerSimple("applied_crusher",
                     BEAppliedCrusher::new,
@@ -818,9 +822,15 @@ public class AMEMachines {
             BECompactFissionReactor::new,
             BECompactFissionReactor.class,
             AMELang.DESCRIPTION_COMPACT_MACHINE,
-            tier -> builder -> builder
-                    .changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
-                            AMEUpgrade.RADIOACTIVE_SEALING.getValue())));
+            tier -> builder -> {
+                builder.changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
+                                AMEUpgrade.RADIOACTIVE_SEALING.getValue()));
+                if (tier.ordinal() < AMETier.values().length - 1) {
+                    AMETier[] tierValues = AMETier.values();
+                    builder.with(new AMEAttributeUpgradeable(() -> getCompactFir(tierValues[tier.ordinal() + 1]).getBlockObject()));
+                }
+                return builder;
+            });
 
     public static final EnumMap<AMETier, MachineRegistryObject<BECompactFusionReactor, BlockTileModel<BECompactFusionReactor, BlockTypeMachine<BECompactFusionReactor>>, MekanismTileContainer<BECompactFusionReactor>, ItemBlockMachine>> COMPACT_FUSION_REACTOR = registerMachines(
             tier -> tier.nameForNormal + "_compact_fusion_reactor",
