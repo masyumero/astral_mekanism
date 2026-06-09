@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import astral_mekanism.upgrade.AMESmeltingUpgradeData;
+import astral_mekanism.upgrade.SmeltingUpgradeData;
 import mekanism.common.upgrade.IUpgradeData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -187,7 +187,7 @@ public class BEEnergizedSmeltingFactory extends BlockEntityProgressFactory<Smelt
 
     @Override
     public void parseUpgradeData(@NotNull IUpgradeData upgradeData) {
-        if (upgradeData instanceof AMESmeltingUpgradeData data) {
+        if (upgradeData instanceof SmeltingUpgradeData data) {
 
             super.parseUpgradeData(data);
 
@@ -205,8 +205,8 @@ public class BEEnergizedSmeltingFactory extends BlockEntityProgressFactory<Smelt
     }
 
     @Override
-    public AMESmeltingUpgradeData getUpgradeData() {
-        return new AMESmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), progress, gasMode, energySlot, infusionTank, List.of(inputSlots), List.of(outputSlots), isSorting(), getComponents());
+    public SmeltingUpgradeData getUpgradeData() {
+        return new SmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), progress, gasMode, energySlot, infusionTank, List.of(inputSlots), List.of(outputSlots), isSorting(), getComponents());
     }
 
     @Override

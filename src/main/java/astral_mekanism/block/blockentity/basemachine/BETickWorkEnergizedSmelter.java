@@ -2,7 +2,7 @@ package astral_mekanism.block.blockentity.basemachine;
 
 import java.util.Map;
 
-import astral_mekanism.upgrade.AMESmeltingUpgradeData;
+import astral_mekanism.upgrade.SmeltingUpgradeData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -186,8 +186,8 @@ public abstract class BETickWorkEnergizedSmelter<BE extends BETickWorkEnergizedS
     }
 
     @Override
-    public AMESmeltingUpgradeData getUpgradeData() {
-        return new AMESmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), 0, gasMode, energySlot, infusionTank, inputSlot, outputSlot, getComponents());
+    public SmeltingUpgradeData getUpgradeData() {
+        return new SmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), 0, gasMode, energySlot, infusionTank, inputSlot, outputSlot, getComponents());
     }
 
     @Override

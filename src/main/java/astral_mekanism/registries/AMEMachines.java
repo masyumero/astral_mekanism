@@ -235,6 +235,10 @@ public class AMEMachines {
         return ENERGIZED_SMELTING_FACTORIES.get(tier);
     }
 
+    private static MachineRegistryObject<BECompactTEP, BlockTileModel<BECompactTEP, BlockTypeMachine<BECompactTEP>>, ContainerPagedMachine<BECompactTEP>, ItemBlockMachine> getCompactTep(AMETier tier) {
+        return COMPACT_TEP.get(tier);
+    }
+
     public static final MachineRegistryObject<BEAppliedCrusher, ?, MekanismTileContainer<BEAppliedCrusher>, ?> APPLIED_CRUSHER = MACHINES
             .registerSimple("applied_crusher",
                     BEAppliedCrusher::new,
@@ -857,10 +861,16 @@ public class AMEMachines {
             BECompactTEP::new,
             BECompactTEP.class,
             AMELang.DESCRIPTION_COMPACT_MACHINE,
-            tier -> builder -> builder
-                    .withEnergyConfig(() -> FloatingLong.create(100), () -> FloatingLong.create(40000))
-                    .withSound(MekanismSounds.RESISTIVE_HEATER)
-                    .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, AMEUpgrade.WATER_SUPPLY.getValue())));
+            tier -> builder -> {
+                builder.withEnergyConfig(() -> FloatingLong.create(100), () -> FloatingLong.create(40000))
+                        .withSound(MekanismSounds.RESISTIVE_HEATER)
+                        .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, AMEUpgrade.WATER_SUPPLY.getValue()));
+                if (tier.ordinal() < AMETier.values().length - 1) {
+                    AMETier[] tierValues = AMETier.values();
+                    builder.with(new AMEAttributeUpgradeable(() -> getCompactTep(tierValues[tier.ordinal() + 1]).getBlockObject()));
+                }
+                return builder;
+            });
 
     public static final MachineRegistryObject<BEEnchantedChemicalInjectionChamber, BlockTileModel<BEEnchantedChemicalInjectionChamber, BlockTypeMachine<BEEnchantedChemicalInjectionChamber>>, MekanismTileContainer<BEEnchantedChemicalInjectionChamber>, ItemBlockMachine> ENCHANTED_CHEMICAL_INJECTION_CHAMBER = MACHINES
             .registerSimple("enchanted_chemical_injection_chamber",

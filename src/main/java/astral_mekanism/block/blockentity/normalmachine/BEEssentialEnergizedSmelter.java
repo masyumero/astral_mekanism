@@ -3,7 +3,7 @@ package astral_mekanism.block.blockentity.normalmachine;
 import java.util.List;
 import java.util.Map;
 
-import astral_mekanism.upgrade.AMESmeltingUpgradeData;
+import astral_mekanism.upgrade.SmeltingUpgradeData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,8 +189,8 @@ public class BEEssentialEnergizedSmelter extends BlockEntityProgressMachine<Smel
     }
 
     @Override
-    public AMESmeltingUpgradeData getUpgradeData() {
-        return new AMESmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), gasMode, energySlot, infusionTank, inputSlot, outputSlot, getComponents());
+    public SmeltingUpgradeData getUpgradeData() {
+        return new SmeltingUpgradeData(redstone, getControlType(), getEnergyContainer(), getOperatingTicks(), gasMode, energySlot, infusionTank, inputSlot, outputSlot, getComponents());
     }
 
     @Override
