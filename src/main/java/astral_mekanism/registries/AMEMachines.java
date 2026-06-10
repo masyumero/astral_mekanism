@@ -6,8 +6,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import astral_mekanism.block.block.AMEAttributeUpgradeable;
-import astral_mekanism.util.AMEEnumUtils;
 import com.fxd927.mekanismelements.common.config.MSConfig;
 import com.fxd927.mekanismelements.common.content.blocktype.MSBlockShapes;
 import com.jerry.mekanism_extras.api.ExtraUpgrade;
@@ -244,6 +242,14 @@ public class AMEMachines {
         return COMPACT_FIR.get(tier);
     }
 
+    private static MachineRegistryObject<BECompactFusionReactor, BlockTileModel<BECompactFusionReactor, BlockTypeMachine<BECompactFusionReactor>>, MekanismTileContainer<BECompactFusionReactor>, ItemBlockMachine> getCompactFusion(AMETier tier) {
+        return COMPACT_FUSION_REACTOR.get(tier);
+    }
+
+    private static MachineRegistryObject<BECompactNaquadahReactor, BlockTileModel<BECompactNaquadahReactor, BlockTypeMachine<BECompactNaquadahReactor>>, MekanismTileContainer<BECompactNaquadahReactor>, ItemBlockMachine> getCompactNaquadah(AMETier tier) {
+        return COMPACT_NAQUADAH_REACTOR.get(tier);
+    }
+
     public static final MachineRegistryObject<BEAppliedCrusher, ?, MekanismTileContainer<BEAppliedCrusher>, ?> APPLIED_CRUSHER = MACHINES
             .registerSimple("applied_crusher",
                     BEAppliedCrusher::new,
@@ -354,17 +360,13 @@ public class AMEMachines {
             BEAstralEnergizedSmeltingFactory::new,
             BEAstralEnergizedSmeltingFactory.class,
             AMELang.DESCRIPTION_ASTRAL_MACHINE,
-            t -> builder -> {
-                builder.changeAttributeUpgrade(
-                            EnumSet.of(Upgrade.MUFFLING, Upgrade.ENERGY, AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
-                                    AMEUpgrade.XP.getValue()))
+            t -> builder -> builder
+                    .changeAttributeUpgrade(
+                        EnumSet.of(Upgrade.MUFFLING, Upgrade.ENERGY, AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
+                                AMEUpgrade.XP.getValue()))
                     .withSound(MekanismSounds.ENERGIZED_SMELTER)
-                    .withEnergyConfig(MekanismConfig.usage.energizedSmelter, MAX_SUPPLIER);
-                if (t.ordinal() < AMETier.values().length - 1) {
-                    builder.with(new AMEAttributeUpgradeable(() -> getAstralSmeltingFactory(AMEEnumUtils.AME_TIERS[t.ordinal() + 1]).getBlockObject()));
-                }
-                return builder;
-            });
+                    .withEnergyConfig(MekanismConfig.usage.energizedSmelter, MAX_SUPPLIER)
+                    .createAttributeUpgradeable(t, AMEMachines::getAstralSmeltingFactory));
 
     public static final MachineRegistryObject<BEAstralChemicalInjectionChamber, BlockTileModel<BEAstralChemicalInjectionChamber, BlockTypeMachine<BEAstralChemicalInjectionChamber>>, MekanismTileContainer<BEAstralChemicalInjectionChamber>, ItemBlockMachine> ASTRAL_CHEMICAL_INJECTION_CHAMBER = MACHINES
             .registerSimple("astral_chemical_injection_chamber",
@@ -584,14 +586,12 @@ public class AMEMachines {
                     BEAstralEnergizedSmelter::new,
                     BEAstralEnergizedSmelter.class,
                     AMELang.DESCRIPTION_ASTRAL_MACHINE,
-                    builder -> {
-                builder.withEnergyConfig(MekanismConfig.usage.energizedSmelter, MAX_SUPPLIER)
+                    builder -> builder
+                            .withEnergyConfig(MekanismConfig.usage.energizedSmelter, MAX_SUPPLIER)
                         .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, Upgrade.ENERGY,
                                 AMEUpgrade.COBBLESTONE_SUPPLY.getValue(), AMEUpgrade.XP.getValue()))
-                        .withSound(MekanismSounds.ENERGIZED_SMELTER);
-                builder.with(new AMEAttributeUpgradeable(() -> getAstralSmeltingFactory(AMETier.ESSENTIAL).getBlockObject()));
-                return builder;
-            });
+                        .withSound(MekanismSounds.ENERGIZED_SMELTER)
+                        .createAttributeUpgradeable(null, tier -> getAstralSmeltingFactory(AMETier.ESSENTIAL)));
 
     public static final MachineRegistryObject<BEAstralFluidInfuser, BlockTileModel<BEAstralFluidInfuser, BlockTypeMachine<BEAstralFluidInfuser>>, MekanismTileContainer<BEAstralFluidInfuser>, ItemBlockMachine> ASTRAL_FLUID_INFUSER = MACHINES
             .registerSimple("astral_fluid_infuser",
@@ -822,14 +822,10 @@ public class AMEMachines {
             BECompactFissionReactor::new,
             BECompactFissionReactor.class,
             AMELang.DESCRIPTION_COMPACT_MACHINE,
-            tier -> builder -> {
-                builder.changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
-                                AMEUpgrade.RADIOACTIVE_SEALING.getValue()));
-                if (tier.ordinal() < AMETier.values().length - 1) {
-                    builder.with(new AMEAttributeUpgradeable(() -> getCompactFir(AMEEnumUtils.AME_TIERS[tier.ordinal() + 1]).getBlockObject()));
-                }
-                return builder;
-            });
+            tier -> builder -> builder
+                    .changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
+                            AMEUpgrade.RADIOACTIVE_SEALING.getValue()))
+                    .createAttributeUpgradeable(tier, AMEMachines::getCompactFir));
 
     public static final EnumMap<AMETier, MachineRegistryObject<BECompactFusionReactor, BlockTileModel<BECompactFusionReactor, BlockTypeMachine<BECompactFusionReactor>>, MekanismTileContainer<BECompactFusionReactor>, ItemBlockMachine>> COMPACT_FUSION_REACTOR = registerMachines(
             tier -> tier.nameForNormal + "_compact_fusion_reactor",
@@ -838,7 +834,8 @@ public class AMEMachines {
             AMELang.DESCRIPTION_COMPACT_MACHINE,
             tier -> builder -> builder
                     .changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
-                            AMEUpgrade.RADIOACTIVE_SEALING.getValue())));
+                            AMEUpgrade.RADIOACTIVE_SEALING.getValue()))
+                    .createAttributeUpgradeable(tier, AMEMachines::getCompactFusion));
 
     public static final EnumMap<AMETier, MachineRegistryObject<BECompactNaquadahReactor, BlockTileModel<BECompactNaquadahReactor, BlockTypeMachine<BECompactNaquadahReactor>>, MekanismTileContainer<BECompactNaquadahReactor>, ItemBlockMachine>> COMPACT_NAQUADAH_REACTOR = registerMachines(
             tier -> tier.nameForNormal + "_compact_naquadah_reactor",
@@ -847,7 +844,8 @@ public class AMEMachines {
             AMELang.DESCRIPTION_COMPACT_MACHINE,
             tier -> builder -> builder
                     .changeAttributeUpgrade(EnumSet.of(AMEUpgrade.WATER_SUPPLY.getValue(),
-                            AMEUpgrade.RADIOACTIVE_SEALING.getValue())));
+                            AMEUpgrade.RADIOACTIVE_SEALING.getValue()))
+                    .createAttributeUpgradeable(tier, AMEMachines::getCompactNaquadah));
 
     public static final MachineRegistryObject<BECompactSPS, BlockTileModel<BECompactSPS, BlockTypeMachine<BECompactSPS>>, MekanismTileContainer<BECompactSPS>, ItemBlockMachine> COMPACT_SPS = MACHINES
             .registerSimple("compact_sps",
@@ -870,15 +868,11 @@ public class AMEMachines {
             BECompactTEP::new,
             BECompactTEP.class,
             AMELang.DESCRIPTION_COMPACT_MACHINE,
-            tier -> builder -> {
-                builder.withEnergyConfig(() -> FloatingLong.create(100), () -> FloatingLong.create(40000))
-                        .withSound(MekanismSounds.RESISTIVE_HEATER)
-                        .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, AMEUpgrade.WATER_SUPPLY.getValue()));
-                if (tier.ordinal() < AMETier.values().length - 1) {
-                    builder.with(new AMEAttributeUpgradeable(() -> getCompactTep(AMEEnumUtils.AME_TIERS[tier.ordinal() + 1]).getBlockObject()));
-                }
-                return builder;
-            });
+            tier -> builder -> builder
+                    .withEnergyConfig(() -> FloatingLong.create(100), () -> FloatingLong.create(40000))
+                    .withSound(MekanismSounds.RESISTIVE_HEATER)
+                    .changeAttributeUpgrade(EnumSet.of(Upgrade.MUFFLING, AMEUpgrade.WATER_SUPPLY.getValue()))
+                    .createAttributeUpgradeable(tier, AMEMachines::getCompactTep));
 
     public static final MachineRegistryObject<BEEnchantedChemicalInjectionChamber, BlockTileModel<BEEnchantedChemicalInjectionChamber, BlockTypeMachine<BEEnchantedChemicalInjectionChamber>>, MekanismTileContainer<BEEnchantedChemicalInjectionChamber>, ItemBlockMachine> ENCHANTED_CHEMICAL_INJECTION_CHAMBER = MACHINES
             .registerSimple("enchanted_chemical_injection_chamber",
@@ -1374,19 +1368,15 @@ public class AMEMachines {
             BEEnergizedSmeltingFactory::new,
             BEEnergizedSmeltingFactory.class,
             MekanismLang.FACTORY_TYPE,
-            tier -> builder -> {
-                builder.withSound(MekanismSounds.ENERGIZED_SMELTER)
-                        .changeAttributeUpgrade(
-                                EnumSet.of(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, ExtraUpgrade.STACK,
-                                        AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
-                                        AMEUpgrade.XP.getValue()))
-                        .withEnergyConfig(MekanismConfig.usage.energizedSmelter,
-                                () -> MekanismConfig.storage.energizedSmelter.get().multiply(tier.processes));
-                if (tier.ordinal() < AMETier.values().length - 1) {
-                    builder.with(new AMEAttributeUpgradeable(() -> getSmeltingFactory(AMEEnumUtils.AME_TIERS[tier.ordinal() + 1]).getBlockObject()));
-                }
-                return builder;
-            });
+            tier -> builder -> builder
+                    .withSound(MekanismSounds.ENERGIZED_SMELTER)
+                    .changeAttributeUpgrade(
+                            EnumSet.of(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, ExtraUpgrade.STACK,
+                                    AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
+                                    AMEUpgrade.XP.getValue()))
+                    .withEnergyConfig(MekanismConfig.usage.energizedSmelter,
+                            () -> MekanismConfig.storage.energizedSmelter.get().multiply(tier.processes))
+                    .createAttributeUpgradeable(tier, AMEMachines::getSmeltingFactory));
 
     public static final MachineRegistryObject<BEAstralCrafter, BlockTileModel<BEAstralCrafter, BlockTypeMachine<BEAstralCrafter>>, ContainerAstralCrafter, ItemBlockMachine> ASTRAL_CRAFTER = MACHINES
             .registerDefaultBlockItem("essential_crafter",
@@ -1403,17 +1393,15 @@ public class AMEMachines {
                     BEEssentialEnergizedSmelter::new,
                     BEEssentialEnergizedSmelter.class,
                     MekanismLang.DESCRIPTION_ENERGIZED_SMELTER,
-                    builder -> {
-                builder.withEnergyConfig(MekanismConfig.usage.energizedSmelter,
+                    builder -> builder
+                            .withEnergyConfig(MekanismConfig.usage.energizedSmelter,
                                         MekanismConfig.storage.energizedSmelter)
-                                .changeAttributeUpgrade(
-                                        EnumSet.of(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, ExtraUpgrade.STACK,
-                                                AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
-                                                AMEUpgrade.XP.getValue()))
-                                .withSound(MekanismSounds.ENERGIZED_SMELTER);
-                builder.with(new AMEAttributeUpgradeable(() -> getSmeltingFactory(AMETier.ESSENTIAL).getBlockObject()));
-                return builder;
-                    });
+                            .changeAttributeUpgrade(
+                                    EnumSet.of(Upgrade.SPEED, Upgrade.ENERGY, Upgrade.MUFFLING, ExtraUpgrade.STACK,
+                                            AMEUpgrade.COBBLESTONE_SUPPLY.getValue(),
+                                            AMEUpgrade.XP.getValue()))
+                            .withSound(MekanismSounds.ENERGIZED_SMELTER)
+                            .createAttributeUpgradeable(null, tier -> getSmeltingFactory(AMETier.ESSENTIAL)));
 
     public static final MachineRegistryObject<BEEssentialFormulaicAssemblicator, BlockTileModel<BEEssentialFormulaicAssemblicator, BlockTypeMachine<BEEssentialFormulaicAssemblicator>>, ContainerEssentialFormulaicAseemblicator, ItemBlockMachine> ESSENTIAL_FORMULAIC_ASSEMBLICATOR = MACHINES
             .registerDefaultBlockItem("essential_formulaic_assemblicator",
