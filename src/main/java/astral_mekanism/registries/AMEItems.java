@@ -9,6 +9,7 @@ import appeng.items.parts.PartModelsHelper;
 import astral_mekanism.AMEConstants;
 import astral_mekanism.AMETier;
 import astral_mekanism.enums.AMEUpgrade;
+import astral_mekanism.item.AMEItemAstralTierInstaller;
 import astral_mekanism.item.AMEItemMaxTierInstaller;
 import astral_mekanism.item.AMEItemTierInstaller;
 import astral_mekanism.item.DegitalMinerFilterToolItem;
@@ -228,6 +229,7 @@ public class AMEItems {
     public static final ItemRegistryObject<AMEItemTierInstaller> INFINITE_MULTIVERSAL_TIER_INSTALLER = registerInstaller(AMETier.COSMIC, AMETier.INFINITE);
     public static final ItemRegistryObject<AMEItemTierInstaller> ASTRONOMICAL_TIER_INSTALLER = registerInstaller(AMETier.INFINITE, AMETier.ASTRAL);
     public static final ItemRegistryObject<AMEItemMaxTierInstaller> ASTRONOMICAL_MAX_TIER_INSTALLER = ITEMS.register("astronomical_max_tier_installer", AMEItemMaxTierInstaller::new);
+    public static final ItemRegistryObject<AMEItemAstralTierInstaller> ASTRAL_TIER_INSTALLER = ITEMS.register("astral_tier_installer", AMEItemAstralTierInstaller::new);
 
     private static ItemRegistryObject<ItemUpgrade> registerUpgrade(Upgrade type) {
         return ITEMS.register(type.getRawName() + "_upgrade", properties -> new ItemUpgrade(type, properties));

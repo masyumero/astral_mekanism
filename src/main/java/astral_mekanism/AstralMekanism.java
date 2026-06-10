@@ -1,5 +1,7 @@
 package astral_mekanism;
 
+import astral_mekanism.upgrade.AstralUpgradeableMachines;
+import astral_mekanism.util.AMEUpgradeableUtils;
 import com.mojang.logging.LogUtils;
 
 import appeng.api.features.GridLinkables;
@@ -47,6 +49,7 @@ public class AstralMekanism {
         AMEConfig.registerConfigs(context);
         instance = this;
         IEventBus modEventBus = context.getModEventBus();
+        AstralUpgradeableMachines.init();
         AMEItemDefinitions.INSTANCE.register(modEventBus);
         AMEBlockDefinitions.INSTANCE.register(modEventBus);
         AMEBlockEntityRegistry.INSTANCE.register(modEventBus);
@@ -70,6 +73,7 @@ public class AstralMekanism {
 
     private void commonSetup0(final FMLCommonSetupEvent event) {
         LOGGER.info(MODID + " was initialized.");
+        AMEUpgradeableUtils.applyDeferredAttributeUpgradeable();
         packetHandler.initialize();
     }
 
