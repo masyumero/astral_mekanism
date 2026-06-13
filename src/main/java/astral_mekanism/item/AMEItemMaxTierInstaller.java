@@ -1,8 +1,14 @@
 package astral_mekanism.item;
 
+import appeng.api.integrations.igtooltip.TooltipContext;
+import astral_mekanism.AMELang;
 import astral_mekanism.AMETier;
 import astral_mekanism.block.block.AMEAttributeUpgradeable;
+import mekanism.api.text.EnumColor;
+import mekanism.client.key.MekKeyHandler;
+import mekanism.client.key.MekanismKeyHandler;
 import mekanism.common.Mekanism;
+import mekanism.common.MekanismLang;
 import mekanism.common.block.attribute.Attribute;
 import mekanism.common.tile.base.TileEntityMekanism;
 import mekanism.common.tile.interfaces.ITierUpgradable;
@@ -10,15 +16,21 @@ import mekanism.common.tile.interfaces.ITileDirectional;
 import mekanism.common.upgrade.IUpgradeData;
 import mekanism.common.util.WorldUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class AMEItemMaxTierInstaller extends Item {
 
@@ -102,5 +114,13 @@ public class AMEItemMaxTierInstaller extends Item {
             }
         }
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> tooltip, TooltipFlag p_41424_) {
+        super.appendHoverText(p_41421_, p_41422_, tooltip, p_41424_);
+        if(MekKeyHandler.isKeyPressed(MekanismKeyHandler.descriptionKey)) tooltip.add(AMELang.DESCRIPTION_ASTRONOMICAL_MAX_TIER_INSTALLER.translate());
+        else tooltip.add(MekanismLang.HOLD_FOR_DESCRIPTION.translateColored(EnumColor.GRAY, EnumColor.AQUA, MekanismKeyHandler.descriptionKey.getTranslatedKeyMessage()));
+
     }
 }

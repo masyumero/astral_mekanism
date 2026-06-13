@@ -779,6 +779,7 @@
     "description.astral_mekanism.certus_quartz_ore": "Ore that might exist on a planet somewhere in the distant universe.\nNot found in nature.",
     "description.astral_mekanism.netherite_ore": "Ore that was likely mined by the former Piglin civilization.\nNot found in nature.",
     "description.astral_mekanism.mekmachine_upgrade_tool": "First, register Upgardes for Mekanism Machine on Cell Workbench.\nThen, Link this item to ME Network. \nYou can install Registered Upgrades from ME Storage to Mekanism Machine (sneak+use).",
+    "description.astral_mekanism.astronomical_max_tier_installer": "Directly upgrades compatible machines up to the Astronomical tier.",
     "explain.astral_mekanism.assemblicator_bookbutton": "Show a recipe on JEI which is regitered on this machine.\nYou can register a recipe with JEI's '+' button.",
     "explain.astral_mekanism.assemblicator_torchbutton": "If this torch doesn't lit, any recipe isn't registered on this machine.\nYou can register a recipe with JEI's '+' button.",
     "label.astral_mekanism.fluid_coolant": "Fluid Coolant",

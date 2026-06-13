@@ -777,6 +777,7 @@
     "description.astral_mekanism.certus_quartz_ore": "遠い宇宙のどこかの惑星にはあるかもしれない鉱石。\n※自然生成されません。",
     "description.astral_mekanism.netherite_ore": "かつてネザーにあったとされるピグリンの文明が採掘していたとみられる鉱石。\n※自然生成されません。",
     "description.astral_mekanism.mekmachine_upgrade_tool": "セルワークベンチでMekanismのアップグレードを登録し、ME無線アクセスポイントでME倉庫と接続してください。 \nしゃがみながらMekanism機械に使うことでアップグレードを一括インストールできます。",
+    "description.astral_mekanism.astronomical_max_tier_installer": "対応する機械を「天文級」まで直接アップグレードすることができます。",
     "label.astral_mekanism.fluid_coolant": "液体冷媒",
     "label.astral_mekanism.gas_coolant": "ガス冷媒",
     "label.astral_mekanism.heated_fluid_coolant": "加熱された液体冷媒",
